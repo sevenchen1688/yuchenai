@@ -1,0 +1,64 @@
+.VPHome .VPHero .VPImage {
+  max-height: 350px !important;
+  width: auto !important;
+  margin-right: 2rem !important;
+  position: relative !important;
+  padding: 0 !important;
+}
+
+.VPHome .VPHero .VPImage::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 280px !important;
+  height: 280px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.2) 50%, transparent 70%) !important;
+  filter: blur(20px) !important;
+  z-index: -1 !important;
+}
+
+.VPHome .VPHero .VPImage::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 240px !important;
+  height: 240px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+  filter: blur(10px) !important;
+  z-index: 0 !important;
+}
+
+.VPHome .VPHero .VPImage img {
+  position: relative !important;
+  z-index: 1 !important;
+  filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.5)) !important;
+}
+
+.VPHero {
+  padding-top: 6rem !important;
+  padding-bottom: 4rem !important;
+}
+
+.VPHero .name {
+  font-size: 3rem !important;
+  line-height: 1.1 !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.VPHero .text {
+  font-size: 1.25rem !important;
+}
+
+.VPHero .tagline {
+  font-size: 1.2rem !important;
+  color: var(--vp-c-text-2) !important;
+}
