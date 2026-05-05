@@ -174,7 +174,7 @@ export default defineConfig({
     sidebar: generateSidebar(),
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/yourusername' }
+      { icon: 'github', link: 'https://github.com/sevenchen1688/yuchenai' }
     ],
 
     footer: {
