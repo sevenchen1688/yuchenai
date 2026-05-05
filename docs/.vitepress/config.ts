@@ -25,7 +25,7 @@ function getLatestArticles(limit: number = 10) {
         articles.push({
           title: getArticleTitle(absPath),
           url: '/' + urlPath,
-          date: stat.mtimeMs
+          date: stat.birthtimeMs
         })
       }
     } catch { /* skip unreadable files */ }

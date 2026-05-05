@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: 探索AI · 构建未来
-  text: 雨辰AI工作坊
+  # text: 雨辰AI工作坊
   tagline: — 个人技术博客 —
   image:
     src: /images/logo/logo-large.png
@@ -33,14 +33,6 @@ import { useData } from 'vitepress'
 
 const { frontmatter } = useData()
 const latestArticles = frontmatter.value.latestArticles || []
-
-function formatDate(timestamp) {
-  return new Date(timestamp).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 </script>
 
 ## 欢迎来到我的博客
@@ -50,10 +42,10 @@ function formatDate(timestamp) {
 ### 最新文章
 
 <div v-if="latestArticles.length > 0" class="latest-articles">
-  <div v-for="article in latestArticles" :key="article.url" class="article-item">
-    <a :href="article.url" class="article-title">{{ article.title }}</a>
-    <span class="article-date">{{ formatDate(article.date) }}</span>
-  </div>
+  <a v-for="article in latestArticles" :key="article.url" :href="article.url" class="article-item">
+    <span class="bullet"></span>
+    <span class="article-title">{{ article.title }}</span>
+  </a>
 </div>
 <div v-else>
   <p>暂无文章</p>
@@ -63,26 +55,25 @@ function formatDate(timestamp) {
 .latest-articles {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.15em;
+  margin-top: 16px;
 }
 .article-item {
   display: flex;
-  align-items: baseline;
-  gap: 0.75em;
+  align-items: center;
+  gap: 0.5em;
+  text-decoration: none;
+}
+.bullet {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid var(--vp-c-text-2);
+  margin-top: 1px;
 }
 .article-title {
   font-weight: 500;
   color: var(--vp-c-brand);
-  text-decoration: none;
-  flex: 1;
-}
-.article-title:hover {
-  text-decoration: underline;
-  color: var(--vp-c-brand-dark);
-}
-.article-date {
-  font-size: 0.875em;
-  color: var(--vp-c-text-2);
-  white-space: nowrap;
 }
 </style>
