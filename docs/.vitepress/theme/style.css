@@ -42,7 +42,12 @@
 
 .VPHero {
   padding-top: 6rem !important;
-  padding-bottom: 4rem !important;
+  padding-bottom: 0 !important;
+}
+
+.VPFeatures {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
 
 .VPHero .name {
