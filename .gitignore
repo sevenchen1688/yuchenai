@@ -5,3 +5,4 @@ docs/.vitepress/cache/
 .claude/
 .DS_Store
 *.log
+*.timestamp-*

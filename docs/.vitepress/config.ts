@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress'
 import { resolve, relative, basename } from 'node:path'
 import { statSync } from 'node:fs'
-import { generateSidebar, findFirstArticleLink, getArticleTitle } from './sidebar'
+import { generateSidebar, findFirstArticleLink, findFirstCategoryArticle, getArticleTitle } from './sidebar'
 import { buildSlugConfig } from './slug'
+import { generateBlogListing } from './blog-data'
 
 const docsDir = resolve(__dirname, '..')
 const slugConfig = buildSlugConfig(docsDir)
@@ -35,6 +36,12 @@ function getLatestArticles(limit: number = 10) {
 }
 
 const latestArticles = getLatestArticles(10)
+const blogListingData = generateBlogListing(docsDir)
+const firstArticleLink = findFirstCategoryArticle()
+
+const blogNavLabels: Record<string, string> = {
+  'ai-fundamentals': 'AI通识'
+}
 
 export default defineConfig({
   title: '雨辰AI工作坊',
@@ -55,6 +62,11 @@ export default defineConfig({
 
     if (pageData.relativePath === 'index.md') {
       pageData.frontmatter.latestArticles = latestArticles
+    }
+
+    if (pageData.relativePath === 'blog/index.md') {
+      pageData.frontmatter.blogListing = blogListingData
+      pageData.frontmatter.firstArticleLink = firstArticleLink
     }
   },
 
@@ -155,7 +167,7 @@ export default defineConfig({
     logo: '/images/logo/logo.png',
     nav: [
       { text: '首页', link: '/' },
-      { text: 'AI通识', link: findFirstArticleLink('ai-fundamentals') },
+      { text: blogNavLabels['ai-fundamentals'], link: findFirstArticleLink('ai-fundamentals') },
       { text: '关于', link: '/about' }
     ],
 
@@ -171,7 +183,7 @@ export default defineConfig({
       }
     },
 
-    sidebar: generateSidebar(),
+    sidebar: generateSidebar(blogNavLabels),
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/sevenchen1688/yuchenai' }

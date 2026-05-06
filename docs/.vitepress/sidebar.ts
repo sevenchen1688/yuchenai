@@ -18,7 +18,7 @@ export function getArticleTitle(mdPath: string): string {
   }
 }
 
-function listArticles(absoluteDir: string): string[] {
+export function listArticles(absoluteDir: string): string[] {
   try {
     return readdirSync(absoluteDir).filter(f => f.endsWith('.md') && f !== 'index.md')
   } catch {
@@ -26,7 +26,7 @@ function listArticles(absoluteDir: string): string[] {
   }
 }
 
-function readBlogConfig(subdir: string): { eng: string; chn: string }[] {
+export function readBlogConfig(subdir: string): { eng: string; chn: string }[] {
   const configPath = join(docsDir, 'blog', subdir, 'config.json')
   if (!existsSync(configPath)) return []
   try {
@@ -86,7 +86,28 @@ export function findFirstArticleLink(subdir?: string): string {
   return `/blog/${subdir}/`
 }
 
-export function generateSidebar(): Record<string, any[]> {
+export function findFirstCategoryArticle(): string {
+  const blogDir = join(docsDir, 'blog')
+  let subdirs: string[]
+  try {
+    subdirs = readdirSync(blogDir, { withFileTypes: true })
+      .filter(d => d.isDirectory())
+      .map(d => d.name)
+      .sort()
+  } catch {
+    return '/blog/'
+  }
+
+  for (const subdir of subdirs) {
+    if (existsSync(join(blogDir, subdir, 'config.json'))) {
+      return findFirstArticleLink(subdir)
+    }
+  }
+
+  return '/blog/'
+}
+
+export function generateSidebar(navLabels: Record<string, string>): Record<string, any[]> {
   const sidebar: Record<string, any[]> = {
     '/blog/': [
       {
@@ -97,14 +118,6 @@ export function generateSidebar(): Record<string, any[]> {
   }
 
   // blog root articles (use slugs)
-  const blogRoot = join(docsDir, 'blog')
-  for (const file of listArticles(blogRoot)) {
-    sidebar['/blog/'][0].items.push({
-      text: getArticleTitle(join(blogRoot, file)),
-      link: `/blog/${getSlug(blogRoot, file)}`
-    })
-  }
-
   let subdirs: string[]
   try {
     subdirs = readdirSync(join(docsDir, 'blog'), { withFileTypes: true })
@@ -116,7 +129,13 @@ export function generateSidebar(): Record<string, any[]> {
 
   for (const subdir of subdirs) {
     if (existsSync(join(docsDir, 'blog', subdir, 'config.json'))) {
-      sidebar[`/blog/${subdir}/`] = buildSidebarForDir(subdir)
+      const subdirPath = join(docsDir, 'blog', subdir)
+      const label = navLabels[subdir] || getArticleTitle(join(subdirPath, 'index.md'))
+      sidebar['/blog/'].push({
+        text: label,
+        collapsed: false,
+        items: buildSidebarForDir(subdir)
+      })
     }
   }
 
