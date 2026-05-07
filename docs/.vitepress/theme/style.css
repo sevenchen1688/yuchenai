@@ -100,11 +100,12 @@
 }
 
 strong, b {
-  background-color: rgba(102, 126, 234, 0.18);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.12) 100%);
   padding: 0.08em 0.45em;
-  border-radius: 3px;
+  border-radius: 4px;
   color: inherit;
   font-weight: 600;
+  box-decoration-break: clone;
 }
 
 .article-tags-container {
