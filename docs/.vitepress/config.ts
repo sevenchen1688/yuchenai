@@ -1,11 +1,14 @@
 import { defineConfig } from 'vitepress'
-import { resolve, relative, basename } from 'node:path'
-import { statSync, readFileSync } from 'node:fs'
+import { resolve, relative, basename, join } from 'node:path'
+import { statSync, readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { generateSidebar, findFirstArticleLink, findFirstCategoryArticle, getArticleTitle } from './sidebar'
 import { buildSlugConfig } from './slug'
 import { generateBlogListing } from './blog-data'
 import { extractTags } from './auto-tags'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = resolve(__filename, '..')
 const docsDir = resolve(__dirname, '..')
 const slugConfig = buildSlugConfig(docsDir)
 
@@ -88,27 +91,6 @@ export default defineConfig({
       try {
         pageData.lastUpdated = statSync(absPath).mtimeMs
       } catch {}
-
-      const cleanPath = pageData.relativePath.replace(/\\/g, '/')
-      
-      if (cleanPath.startsWith('blog/') && cleanPath !== 'blog/index.md') {
-        const slug = cleanPath.match(/\/([A-Za-z0-9]{12})$/)?.[1]
-        const filePath = slug ? slugConfig.resolveMap[slug] : null
-        
-        if (filePath) {
-          try {
-            const content = readFileSync(filePath, 'utf-8')
-            const tags = extractTags(content)
-            if (tags.length > 0 && pageData.content) {
-              const tagsHtml = tags.map(tag =>
-                `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
-              ).join('')
-              const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
-              pageData.content = tagsContainer + pageData.content
-            }
-          } catch {}
-        }
-      }
     }
 
     if (pageData.relativePath === 'index.md') {
@@ -148,32 +130,6 @@ export default defineConfig({
             }
           }
         }
-      })
-
-      md.core.ruler.push('inject_tags', (state) => {
-        const env = state.env as any
-        if (!env || !env.relativePath) return
-        if (!env.relativePath.startsWith('blog/')) return
-        if (env.relativePath === 'blog/index.md') return
-        if (!env.content) return
-
-        const slug = env.relativePath.match(/\/([A-Za-z0-9]{12})$/)?.[1]
-        if (!slug) return
-        const filePath = slugConfig.resolveMap[slug]
-        if (!filePath) return
-
-        try {
-          const fileContent = readFileSync(filePath, 'utf-8')
-          const tags = extractTags(fileContent)
-          if (tags.length === 0) return
-
-          const tagsHtml = tags.map(tag =>
-            `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
-          ).join('')
-          const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>\n\n`
-
-          env.content = tagsContainer + env.content
-        } catch {}
       })
     }
   },
@@ -256,6 +212,63 @@ export default defineConfig({
         }
       }
     ]
+  },
+
+  buildEnd() {
+    const distDir = join(__dirname, 'dist')
+    console.log('[buildEnd] distDir:', distDir)
+    if (!existsSync(distDir)) {
+      console.log('[buildEnd] dist dir does not exist')
+      return
+    }
+
+    function processHtmlFile(filePath) {
+      try {
+        let content = readFileSync(filePath, 'utf-8')
+        const slugMatch = filePath.match(/\/([A-Za-z0-9]{12})$/)
+        if (!slugMatch) return
+        
+        const slug = slugMatch[1]
+        const filePath2 = slugConfig.resolveMap[slug]
+        if (!filePath2) return
+
+        const mdContent = readFileSync(filePath2, 'utf-8')
+        const tags = extractTags(mdContent)
+        if (tags.length === 0) return
+
+        const tagsHtml = tags.map(tag =>
+          `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+        ).join('')
+        const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
+
+        const h1Match = content.match(/<h1[^>]*>.*?<\/h1>/s)
+        if (h1Match) {
+          content = content.replace(h1Match[0], tagsContainer + h1Match[0])
+          writeFileSync(filePath, content, 'utf-8')
+          console.log('[buildEnd] Tags added to:', filePath)
+        }
+      } catch (e) {
+        console.log('[buildEnd] Error:', e.message)
+      }
+    }
+
+    function walkDir(dir) {
+      try {
+        const files = readdirSync(dir)
+        for (const file of files) {
+          const filePath = join(dir, file)
+          if (file.endsWith('.html') || /^[A-Za-z0-9]{12}$/.test(file)) {
+            processHtmlFile(filePath)
+          } else if (!file.includes('.')) {
+            walkDir(filePath)
+          }
+        }
+      } catch (e) {
+        console.log('[buildEnd] walkDir error:', e.message)
+      }
+    }
+
+    walkDir(distDir)
   },
 
   themeConfig: {
