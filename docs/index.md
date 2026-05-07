@@ -35,9 +35,9 @@ const { frontmatter } = useData()
 const latestArticles = frontmatter.value.latestArticles || []
 </script>
 
-## 欢迎来到我的博客
+## 从这里开始探索
 
-这里是我分享技术见解和学习心得的地方。我会定期更新关于前端开发、后端技术、人工智能等内容。
+这里记录我在编程语言（Java / Python）、AI 技术、以及项目实战中的学习与思考，希望能帮助你少走一些弯路。
 
 ### 最新文章
 
