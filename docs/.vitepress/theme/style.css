@@ -69,9 +69,9 @@
 }
 
 strong, b {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-  padding: 0.1em 0.4em;
-  border-radius: 4px;
+  background-color: rgba(102, 126, 234, 0.18);
+  padding: 0.08em 0.45em;
+  border-radius: 3px;
   color: inherit;
-  font-weight: 700;
+  font-weight: 600;
 }
