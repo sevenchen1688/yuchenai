@@ -88,21 +88,26 @@ export default defineConfig({
       try {
         pageData.lastUpdated = statSync(absPath).mtimeMs
       } catch {}
-      
+
       const cleanPath = pageData.relativePath.replace(/\\/g, '/')
       
-      if (cleanPath.startsWith('blog/') && 
-          cleanPath !== 'blog/index.md') {
-        try {
-          const content = readFileSync(absPath, 'utf-8')
-          const tags = extractTags(content)
-          if (tags.length > 0) {
-            const tagsHtml = tags.map(tag =>
-              `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
-            ).join('')
-            pageData.frontmatter.tagsHtml = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
-          }
-        } catch {}
+      if (cleanPath.startsWith('blog/') && cleanPath !== 'blog/index.md') {
+        const slug = cleanPath.match(/\/([A-Za-z0-9]{12})$/)?.[1]
+        const filePath = slug ? slugConfig.resolveMap[slug] : null
+        
+        if (filePath) {
+          try {
+            const content = readFileSync(filePath, 'utf-8')
+            const tags = extractTags(content)
+            if (tags.length > 0 && pageData.content) {
+              const tagsHtml = tags.map(tag =>
+                `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+              ).join('')
+              const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
+              pageData.content = tagsContainer + pageData.content
+            }
+          } catch {}
+        }
       }
     }
 
@@ -145,35 +150,29 @@ export default defineConfig({
         }
       })
 
-      md.core.ruler.push('auto_tags', (state) => {
-        const env = state.env
+      md.core.ruler.push('inject_tags', (state) => {
+        const env = state.env as any
         if (!env || !env.relativePath) return
-        if (!env.relativePath.startsWith('blog/') || env.relativePath === 'blog/index.md') return
+        if (!env.relativePath.startsWith('blog/')) return
+        if (env.relativePath === 'blog/index.md') return
+        if (!env.content) return
 
-        const absPath = getAbsPathFromRelativePath(env.relativePath)
+        const slug = env.relativePath.match(/\/([A-Za-z0-9]{12})$/)?.[1]
+        if (!slug) return
+        const filePath = slugConfig.resolveMap[slug]
+        if (!filePath) return
+
         try {
-          const content = readFileSync(absPath, 'utf-8')
-          const tags = extractTags(content)
-          if (tags.length > 0) {
-            const tagsHtml = tags.map(tag =>
-              `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
-            ).join('')
-            const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
+          const fileContent = readFileSync(filePath, 'utf-8')
+          const tags = extractTags(fileContent)
+          if (tags.length === 0) return
 
-            for (let i = 0; i < state.tokens.length; i++) {
-              const token = state.tokens[i]
-              if (token.type === 'heading_open' && token.tag === 'h1') {
-                const p = token.map?.[0]
-                if (p !== undefined) {
-                  const htmlToken = new state.Token('html_block', '', 0)
-                  htmlToken.content = tagsContainer
-                  htmlToken.map = [p, p]
-                  state.tokens.splice(i, 0, htmlToken)
-                }
-                break
-              }
-            }
-          }
+          const tagsHtml = tags.map(tag =>
+            `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+          ).join('')
+          const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>\n\n`
+
+          env.content = tagsContainer + env.content
         } catch {}
       })
     }
@@ -208,6 +207,30 @@ export default defineConfig({
               return filePath
             }
           }
+        },
+        load(id) {
+          if (!id.endsWith('.md')) return
+          if (!id.includes('/blog/')) return
+
+          const absPath = resolve(docsDir, id.replace(/^.*\/docs\//, ''))
+          if (!absPath.includes('/blog/ai-fundamentals/')) return
+
+          try {
+            let content = readFileSync(absPath, 'utf-8')
+            const tags = extractTags(content)
+            if (tags.length === 0) return
+
+            const tagsHtml = tags.map(tag =>
+              `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+            ).join('')
+            const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>\n\n`
+
+            if (content.startsWith('#')) {
+              content = tagsContainer + content
+              console.log('[load] Modified, first 200 chars:', content.substring(0, 200))
+              return content
+            }
+          } catch {}
         },
         configureServer(server) {
           const stack = (server.middlewares as any).stack

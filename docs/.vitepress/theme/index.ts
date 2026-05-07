@@ -1,7 +1,27 @@
-import { h, defineComponent, type PropType } from 'vue'
+import { h, defineComponent, type PropType, computed } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import './style.css'
+
+const ArticleTags = defineComponent({
+  name: 'ArticleTags',
+  props: {
+    frontmatter: {
+      type: Object as PropType<Record<string, any>>,
+      default: () => ({})
+    }
+  },
+  setup(props) {
+    const tagsHtml = computed(() => {
+      return props.frontmatter?.tagsHtml || ''
+    })
+
+    return () => {
+      if (!tagsHtml.value) return null
+      return h('div', { innerHTML: tagsHtml.value })
+    }
+  }
+})
 
 export default {
   extends: DefaultTheme,
@@ -15,13 +35,15 @@ export default {
     },
     setup(props) {
       return () => {
-        const tagsHtml = (props.frontmatter && props.frontmatter.tagsHtml) || ''
         return h(DefaultTheme.Layout, {
           frontmatter: props.frontmatter
         }, {
-          'doc-before': tagsHtml ? () => h('div', { innerHTML: tagsHtml }) : undefined
+          'doc-before': () => h(ArticleTags, { frontmatter: props.frontmatter })
         })
       }
     }
-  })
+  }),
+  enhanceApp({ app }) {
+    app.component('ArticleTags', ArticleTags)
+  }
 } satisfies Theme
