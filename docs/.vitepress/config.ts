@@ -1,18 +1,39 @@
 import { defineConfig } from 'vitepress'
 import { resolve, relative, basename } from 'node:path'
-import { statSync } from 'node:fs'
+import { statSync, readFileSync } from 'node:fs'
 import { generateSidebar, findFirstArticleLink, findFirstCategoryArticle, getArticleTitle } from './sidebar'
 import { buildSlugConfig } from './slug'
 import { generateBlogListing } from './blog-data'
+import { extractTags } from './auto-tags'
 
 const docsDir = resolve(__dirname, '..')
 const slugConfig = buildSlugConfig(docsDir)
 
-// Pre-compute: slug -> clean URL path (original filename without .md)
 const slugToCleanPath: Record<string, string> = {}
 for (const [slug, absPath] of Object.entries(slugConfig.resolveMap)) {
   const relPath = relative(docsDir, absPath).replace(/\\/g, '/').replace(/\.md$/, '')
   slugToCleanPath[slug] = relPath
+}
+
+function getAbsPathFromRelativePath(relativePath: string): string {
+  const cleanPath = relativePath.replace(/\\/g, '/')
+  
+  for (const [slug, absPath] of Object.entries(slugConfig.resolveMap)) {
+    const existingCleanPath = relative(docsDir, absPath).replace(/\\/g, '/').replace(/\.md$/, '')
+    if (existingCleanPath === cleanPath) {
+      return absPath
+    }
+  }
+  
+  const m = cleanPath.match(/\/([A-Za-z0-9]{12})$/)
+  if (m && slugConfig.resolveMap[m[1]]) {
+    return slugConfig.resolveMap[m[1]]
+  }
+  
+  if (cleanPath.endsWith('.md')) {
+    return resolve(docsDir, cleanPath)
+  }
+  return resolve(docsDir, cleanPath + '.md')
 }
 
 function getLatestArticles(limit: number = 10) {
@@ -43,6 +64,14 @@ const blogNavLabels: Record<string, string> = {
   'ai-fundamentals': 'AI通识'
 }
 
+function generateTagsHtml(tags: { name: string; color: string }[]): string {
+  if (tags.length === 0) return ''
+  const tagsHtml = tags.map(tag =>
+    `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+  ).join('')
+  return `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
+}
+
 export default defineConfig({
   title: '雨辰AI工作坊',
   description: '个人技术博客',
@@ -54,10 +83,27 @@ export default defineConfig({
     pageData.title = pageData.title.replace(/^\d+\.\s*/, '')
 
     if (pageData.relativePath) {
+      const absPath = getAbsPathFromRelativePath(pageData.relativePath)
+      
       try {
-        const absPath = resolve(docsDir, pageData.relativePath)
         pageData.lastUpdated = statSync(absPath).mtimeMs
-      } catch { /* skip unreadable files */ }
+      } catch {}
+      
+      const cleanPath = pageData.relativePath.replace(/\\/g, '/')
+      
+      if (cleanPath.startsWith('blog/') && 
+          cleanPath !== 'blog/index.md') {
+        try {
+          const content = readFileSync(absPath, 'utf-8')
+          const tags = extractTags(content)
+          if (tags.length > 0) {
+            const tagsHtml = tags.map(tag =>
+              `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+            ).join('')
+            pageData.frontmatter.tagsHtml = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
+          }
+        } catch {}
+      }
     }
 
     if (pageData.relativePath === 'index.md') {
@@ -98,6 +144,38 @@ export default defineConfig({
           }
         }
       })
+
+      md.core.ruler.push('auto_tags', (state) => {
+        const env = state.env
+        if (!env || !env.relativePath) return
+        if (!env.relativePath.startsWith('blog/') || env.relativePath === 'blog/index.md') return
+
+        const absPath = getAbsPathFromRelativePath(env.relativePath)
+        try {
+          const content = readFileSync(absPath, 'utf-8')
+          const tags = extractTags(content)
+          if (tags.length > 0) {
+            const tagsHtml = tags.map(tag =>
+              `<span class="article-tag" style="background-color:${tag.color}20;color:${tag.color};border-color:${tag.color}50">${tag.name}</span>`
+            ).join('')
+            const tagsContainer = `<div class="article-tags-container"><span class="article-tags-label">标签：</span><div class="article-tags">${tagsHtml}</div></div>`
+
+            for (let i = 0; i < state.tokens.length; i++) {
+              const token = state.tokens[i]
+              if (token.type === 'heading_open' && token.tag === 'h1') {
+                const p = token.map?.[0]
+                if (p !== undefined) {
+                  const htmlToken = new state.Token('html_block', '', 0)
+                  htmlToken.content = tagsContainer
+                  htmlToken.map = [p, p]
+                  state.tokens.splice(i, 0, htmlToken)
+                }
+                break
+              }
+            }
+          }
+        } catch {}
+      })
     }
   },
 
@@ -122,8 +200,6 @@ export default defineConfig({
       {
         name: 'slug-resolve',
         resolveId(id) {
-          // Match slug.md imports from client-side pathToFile in dev mode
-          // e.g. /blog/ai-fundamentals/basics/2T6u6aqtNvxN.md
           const m = id.match(/\/([A-Za-z0-9]{12})\.md/)
           if (m) {
             const slug = m[1]
@@ -134,16 +210,12 @@ export default defineConfig({
           }
         },
         configureServer(server) {
-          // Prepend middleware to intercept clean slug URLs BEFORE
-          // VitePress's rewritesPlugin so the SPA fallback serves app shell
-          // instead of Vite serving raw .md files.
           const stack = (server.middlewares as any).stack
           stack.unshift({
             route: '',
             handle: (req: any, _res: any, next: any) => {
               const url: string = req.url || ''
               const pathname = url.replace(/[?#].*$/, '')
-              // Match clean slug URLs (without .md) e.g. /blog/.../2T6u6aqtNvxN
               const m = pathname.match(/\/([A-Za-z0-9]{12})$/)
               if (m) {
                 const slug = m[1]

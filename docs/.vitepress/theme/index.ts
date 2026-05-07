@@ -1,9 +1,27 @@
+import { h, defineComponent, type PropType } from 'vue'
 import DefaultTheme from 'vitepress/theme'
+import type { Theme } from 'vitepress'
 import './style.css'
 
 export default {
-  ...DefaultTheme,
-  enhanceApp({ app, router, siteData }) {
-    // 自定义逻辑可以在这里添加
-  }
-}
+  extends: DefaultTheme,
+  Layout: defineComponent({
+    name: 'Layout',
+    props: {
+      frontmatter: {
+        type: Object as PropType<Record<string, any>>,
+        default: () => ({})
+      }
+    },
+    setup(props) {
+      return () => {
+        const tagsHtml = (props.frontmatter && props.frontmatter.tagsHtml) || ''
+        return h(DefaultTheme.Layout, {
+          frontmatter: props.frontmatter
+        }, {
+          'doc-before': tagsHtml ? () => h('div', { innerHTML: tagsHtml }) : undefined
+        })
+      }
+    }
+  })
+} satisfies Theme
