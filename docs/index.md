@@ -9,9 +9,6 @@ hero:
     src: /images/logo/logo-large.png
     alt: 雨辰AI工作坊 Logo
   actions:
-    - theme: brand
-      text: 开始阅读
-      link: /blog/
     - theme: alt
       text: 关于我
       link: /about
@@ -33,7 +30,12 @@ import { useData } from 'vitepress'
 
 const { frontmatter } = useData()
 const latestArticles = frontmatter.value.latestArticles || []
+const firstArticleLink = frontmatter.value.firstArticleLink || '/blog/'
 </script>
+
+<div class="custom-actions">
+  <a :href="firstArticleLink" class="action custom-brand">开始阅读</a>
+</div>
 
 ## 从这里开始探索
 
@@ -52,6 +54,32 @@ const latestArticles = frontmatter.value.latestArticles || []
 </div>
 
 <style scoped>
+.custom-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+
+.custom-actions .action {
+  display: inline-block;
+  padding: 0 24px;
+  line-height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.custom-actions .custom-brand {
+  background-color: var(--vp-c-brand);
+  color: var(--vp-c-brand-contrast);
+}
+
+.custom-actions .custom-brand:hover {
+  background-color: var(--vp-c-brand-hover);
+}
+
 .latest-articles {
   display: flex;
   flex-direction: column;

@@ -95,6 +95,7 @@ export default defineConfig({
 
     if (pageData.relativePath === 'index.md') {
       pageData.frontmatter.latestArticles = latestArticles
+      pageData.frontmatter.firstArticleLink = firstArticleLink
     }
 
     if (pageData.relativePath === 'blog/index.md') {
