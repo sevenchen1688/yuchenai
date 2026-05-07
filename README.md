@@ -49,6 +49,7 @@ YuChenAI/
 │   │   ├── config.ts                  # VitePress 核心配置
 │   │   ├── sidebar.ts                 # 侧边栏生成 & 文章检索
 │   │   ├── slug.ts                    # Slug 生成 & URL 重写
+│   │   ├── blog-data.ts               # 博客列表数据结构
 │   │   ├── theme/
 │   │   │   ├── index.ts              # 主题入口
 │   │   │   └── style.css             # 自定义样式
@@ -64,12 +65,16 @@ YuChenAI/
 │   │       ├── config.json           # 分类配置
 │   │       ├── slugs.json
 │   │       ├── basics/               # 基础概念（8篇）
-│   │       │   ├── index.md
 │   │       │   ├── 01.AI发展70年：三次浪潮，两次寒冬.md
 │   │       │   ├── 02.AI技术四象限分类.md
-│   │       │   ├── ...
+│   │       │   ├── 03.AI≠ML≠DL≠GenAI的真相，一张图说清楚.md
+│   │       │   ├── 04.Transformer核心原理.md
+│   │       │   ├── 05.普通人都应该懂的AI核心概念与底层原理.md
+│   │       │   ├── 06.盘点国内外主流大模型.md
+│   │       │   ├── 07.4B、8B、37B、70B到底是什么意思？.md
+│   │       │   ├── 08.DeepSeek的稀疏注意力机制.md
 │   │       │   └── slugs.json
-│   │       └── principles/           # 核心原理（2篇）
+│   │       └── principles/           # 核心原理（3篇）
 │   │           ├── index.md
 │   │           ├── neural-networks.md
 │   │           ├── transformer.md
@@ -180,6 +185,26 @@ Slug 映射持久化在每个目录的 `slugs.json` 文件中，构建时自动�
 
 自定义样式在 `docs/.vitepress/theme/style.css` 中，主要包括首页 Hero 区域的 Logo 光晕效果和标题渐变色。
 
+## 核心模块说明
+
+### config.ts
+- 站点全局配置、路由重写、Markdown 增强、主题配置
+- 自定义 Vite 插件实现博客内容监听和 Slug 解析
+
+### slug.ts
+- 使用 MD5 + Base62 生成 12 位短 Slug
+- 自动同步目录中的 Markdown 文件与 Slug 映射
+- 构建路由重写表供 VitePress 使用
+
+### sidebar.ts
+- 自动扫描博客目录结构，生成侧边栏配置
+- 解析 `config.json` 获取分类中英文名称
+- 提取 Markdown 标题作为菜单项文本
+
+### blog-data.ts
+- 构建博客列表页面所需的数据结构
+- 支持根级别文章和多级分类展示
+
 ## 部署
 
 构建产物在 `docs/.vitepress/dist/`，可部署到任何静态托管服务。
@@ -190,3 +215,22 @@ npm run docs:build
 ```
 
 本站 GitHub 仓库：[https://github.com/sevenchen1688/yuchenai](https://github.com/sevenchen1688/yuchenai)
+
+## 文章清单
+
+### AI通识 - 基础概念（8篇）
+
+1. AI发展70年：三次浪潮，两次寒冬
+2. AI技术四象限分类
+3. AI≠ML≠DL≠GenAI的真相，一张图说清楚
+4. Transformer核心原理
+5. 普通人都应该懂的AI核心概念与底层原理
+6. 盘点国内外主流大模型
+7. 4B、8B、37B、70B到底是什么意思？
+8. DeepSeek的稀疏注意力机制
+
+### AI通识 - 核心原理（3篇）
+
+1. 神经网络基础
+2. Transformer详解
+3. 原理概述
