@@ -3,7 +3,7 @@
   width: auto !important;
   margin-right: 2rem !important;
   position: relative !important;
-  padding: 0 !important;
+  padding: 60px !important;
 }
 
 .VPHome .VPHero .VPImage::before {
@@ -12,12 +12,13 @@
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: 400px !important;
-  height: 400px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle at 30% 30%, rgba(100, 218, 255, 0.35) 0%, rgba(185, 84, 255, 0.25) 50%, transparent 70%) !important;
-  filter: blur(40px) !important;
+  width: 600px !important;
+  height: 600px !important;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50% !important;
+  background: radial-gradient(circle at 20% 30%, rgba(100, 200, 255, 0.5) 0%, rgba(150, 100, 255, 0.4) 30%, rgba(255, 80, 200, 0.3) 60%, transparent 80%) !important;
+  filter: blur(60px) !important;
   z-index: -1 !important;
+  animation: morph 8s ease-in-out infinite !important;
 }
 
 .VPHome .VPHero .VPImage::after {
@@ -26,12 +27,13 @@
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: 300px !important;
-  height: 300px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle at 70% 70%, rgba(100, 218, 255, 0.3) 0%, rgba(185, 84, 255, 0.2) 50%, transparent 70%) !important;
-  filter: blur(30px) !important;
-  z-index: -1 !important;
+  width: 450px !important;
+  height: 450px !important;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40% !important;
+  background: radial-gradient(circle at 80% 70%, rgba(100, 150, 255, 0.4) 0%, rgba(200, 80, 255, 0.35) 40%, rgba(255, 100, 180, 0.25) 70%, transparent 90%) !important;
+  filter: blur(50px) !important;
+  z-index: -2 !important;
+  animation: morph 10s ease-in-out infinite reverse !important;
 }
 
 .VPHome .VPHero .VPImage img {
@@ -47,6 +49,25 @@
   }
   50% {
     transform: translateY(-10px) !important;
+  }
+}
+
+@keyframes morph {
+  0%, 100% {
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50% !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+  }
+  25% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40% !important;
+    transform: translate(-50%, -50%) rotate(5deg) !important;
+  }
+  50% {
+    border-radius: 30% 70% 40% 60% / 50% 60% 30% 60% !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+  }
+  75% {
+    border-radius: 70% 30% 60% 40% / 30% 70% 50% 40% !important;
+    transform: translate(-50%, -50%) rotate(-5deg) !important;
   }
 }
 
