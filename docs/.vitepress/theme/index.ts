@@ -1,7 +1,6 @@
-import { h, defineComponent, type PropType, onMounted } from 'vue'
+import { h, defineComponent, type PropType } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
-import { useData } from 'vitepress'
 import './style.css'
 
 export default {
@@ -15,24 +14,6 @@ export default {
       }
     },
     setup(props) {
-      const { frontmatter, page } = useData()
-      
-      onMounted(() => {
-        // 只在首页处理
-        if (page.value.relativePath === 'index.md' && frontmatter.value.firstArticleLink) {
-          // 找到 hero section 中的"开始阅读"按钮
-          setTimeout(() => {
-            const buttons = document.querySelectorAll('.VPButton.medium.brand')
-            buttons.forEach((btn) => {
-              const text = btn.textContent?.trim()
-              if (text === '开始阅读') {
-                (btn as HTMLAnchorElement).href = frontmatter.value.firstArticleLink
-              }
-            })
-          }, 100)
-        }
-      })
-
       return () => {
         return h(DefaultTheme.Layout, {
           frontmatter: props.frontmatter

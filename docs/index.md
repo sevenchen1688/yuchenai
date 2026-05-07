@@ -29,10 +29,25 @@ features:
 ---
 
 <script setup>
-import { useData } from 'vitepress'
+import { useData, onMounted } from 'vitepress'
 
 const { frontmatter } = useData()
 const latestArticles = frontmatter.value.latestArticles || []
+const firstArticleLink = frontmatter.value.firstArticleLink
+
+onMounted(() => {
+  if (firstArticleLink) {
+    // 找到并替换"开始阅读"按钮的链接
+    setTimeout(() => {
+      const buttons = document.querySelectorAll('.VPButton.medium.brand')
+      buttons.forEach((btn) => {
+        if (btn.textContent?.trim() === '开始阅读') {
+          (btn as HTMLAnchorElement).href = firstArticleLink
+        }
+      })
+    }, 50)
+  }
+})
 </script>
 
 ## 从这里开始探索
