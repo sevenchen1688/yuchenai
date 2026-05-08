@@ -66,7 +66,7 @@ const latestArticles = frontmatter.value.latestArticles || []
 .latest-articles {
   display: flex;
   flex-direction: column;
-  gap: 0.15em;
+  gap: var(--list-item-gap, 0.15em);
   margin-top: 16px;
 }
 .article-item {
@@ -77,10 +77,10 @@ const latestArticles = frontmatter.value.latestArticles || []
 }
 .bullet {
   flex-shrink: 0;
-  width: 5px;
-  height: 5px;
+  width: var(--list-bullet-size, 5px);
+  height: var(--list-bullet-size, 5px);
   border-radius: 50%;
-  border: 1px solid var(--vp-c-text-2);
+  border: 1px solid var(--list-bullet-color, var(--vp-c-text-2));
   margin-top: 1px;
 }
 .article-title {
