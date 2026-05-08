@@ -1,9 +1,12 @@
 .VPHome .VPHero .VPImage {
-  max-height: 350px !important;
-  width: auto !important;
-  margin-right: 2rem !important;
+  max-height: 500px !important;
+  max-width: 500px !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 auto !important;
   position: relative !important;
   padding: 80px !important;
+  box-sizing: border-box !important;
 }
 
 .VPHome .VPHero .VPImage::before {
@@ -12,32 +15,21 @@
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: 500px !important;
-  height: 500px !important;
+  width: 600px !important;
+  height: 600px !important;
   border-radius: 50% !important;
-  background: radial-gradient(circle, rgba(102, 166, 255, 0.45) 0%, rgba(168, 85, 247, 0.35) 40%, rgba(236, 72, 153, 0.2) 70%, transparent 90%) !important;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.5) 0%, rgba(168, 85, 247, 0.4) 50%, transparent 75%) !important;
   filter: blur(50px) !important;
-  z-index: -1 !important;
-}
-
-.VPHome .VPHero .VPImage::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 400px !important;
-  height: 400px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.25) 50%, transparent 80%) !important;
-  filter: blur(40px) !important;
-  z-index: -2 !important;
+  z-index: 0 !important;
 }
 
 .VPHome .VPHero .VPImage img {
   position: relative !important;
   z-index: 1 !important;
-  filter: drop-shadow(0 8px 30px rgba(102, 166, 255, 0.3)) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  height: auto !important;
+  filter: drop-shadow(0 10px 40px rgba(96, 165, 250, 0.3)) !important;
 }
 
 .VPHero {
