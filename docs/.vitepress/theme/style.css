@@ -1,51 +1,32 @@
-.VPHome .VPHero {
-  position: relative !important;
-  overflow: visible !important;
-}
-
-.VPHome .VPHero::before {
-  content: '' !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -45%) !important;
-  width: 650px !important;
-  height: 650px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle, rgba(96, 165, 250, 0.45) 0%, rgba(168, 85, 247, 0.35) 40%, rgba(236, 72, 153, 0.2) 70%, transparent 85%) !important;
-  filter: blur(45px) !important;
-  z-index: 0 !important;
-}
-
-.VPHome .VPHero::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -45%) !important;
-  width: 500px !important;
-  height: 500px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle at 30% 40%, rgba(96, 165, 250, 0.5) 0%, rgba(168, 85, 247, 0.3) 50%, transparent 75%) !important;
-  filter: blur(35px) !important;
-  z-index: 1 !important;
-}
-
-.VPHome .VPHero > * {
-  position: relative !important;
-  z-index: 2 !important;
-}
-
 .VPHome .VPHero .VPImage {
   max-height: 450px !important;
   max-width: 450px !important;
   width: 100% !important;
   height: auto !important;
   margin: 0 auto !important;
-  padding: 40px !important;
+  padding: 30px !important;
+  position: relative !important;
+}
+
+.VPHome .VPHero .VPImage::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 120% !important;
+  height: 120% !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.5) 0%, rgba(168, 85, 247, 0.4) 50%, transparent 75%) !important;
+  filter: blur(35px) !important;
+  z-index: -1 !important;
 }
 
 .VPHome .VPHero .VPImage img {
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 100% !important;
+  height: auto !important;
   filter: drop-shadow(0 8px 30px rgba(96, 165, 250, 0.3)) !important;
 }
 
