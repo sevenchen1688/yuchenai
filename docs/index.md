@@ -6,8 +6,8 @@ hero:
   # text: 雨辰AI工作坊
   tagline: — 个人技术博客 —
   image:
-    src: /images/logo/vitepress-logo.svg
-    alt: VitePress Logo
+    src: /images/logo/logo-large.png
+    alt: 雨辰AI工作坊 Logo
   actions:
     - theme: brand
       text: 开始阅读
