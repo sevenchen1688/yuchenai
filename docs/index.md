@@ -38,13 +38,15 @@ const latestArticles = frontmatter.value.latestArticles || []
 
 ## 我是雨辰
 
-- 🐶 14 年毕业，12 年 Java 开发与技术管理经验，历任技术总监、Java 开发专家，具备从 0 到 1 搭建产品技术架构 + 带领团队交付大型商业项目的完整能力。
-
-- 🚀 核心技术：精通 Java 核心与 Spring 全家桶（源码级理解），深耕微服务与 DDD 领域驱动设计；同时掌握工业级 AI 应用开发技术栈（Spring AI/LangChain/RAG/Agent），支持多模态接入与 LLM 应用可观测性建设。
-
-- 🌱 干货：公众号『雨辰学 AI』
-- 📝 博客：yuchenaitech.cn
-- 💌 微信：yuchenai2035 - 备注来意
+<div class="custom-section">
+<ul class="custom-list">
+<li>🐶 14 年毕业，12 年 Java 开发与技术管理经验，历任技术总监、Java 开发专家，具备从 0 到 1 搭建产品技术架构 + 带领团队交付大型商业项目的完整能力。</li>
+<li>🚀 核心技术：精通 Java 核心与 Spring 全家桶（源码级理解），深耕微服务与 DDD 领域驱动设计；同时掌握工业级 AI 应用开发技术栈（Spring AI/LangChain/RAG/Agent），支持多模态接入与 LLM 应用可观测性建设。</li>
+<li>🌱 干货：公众号『雨辰学 AI』</li>
+<li>📝 博客：yuchenaitech.cn</li>
+<li>💌 微信：yuchenai2035 - 备注来意</li>
+</ul>
+</div>
 
 ## 从这里开始探索
 
@@ -62,11 +64,58 @@ const latestArticles = frontmatter.value.latestArticles || []
   <p>暂无文章</p>
 </div>
 
+<style>
+:root {
+  --list-item-gap: 0.15em;
+  --list-bullet-size: 5px;
+  --list-bullet-color: var(--vp-c-text-2);
+}
+
+.custom-section {
+  font-size: inherit;
+}
+
+.custom-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--list-item-gap) !important;
+  margin-top: 0 !important;
+  padding-left: 1.25em !important;
+}
+
+.custom-list li {
+  list-style-type: none !important;
+  list-style: none !important;
+  position: relative !important;
+  padding-left: 0 !important;
+  margin-bottom: 0 !important;
+  line-height: inherit !important;
+}
+
+.custom-list li::marker {
+  content: '' !important;
+  display: none !important;
+}
+
+.custom-list li::before {
+  content: '' !important;
+  position: absolute !important;
+  left: -1.25em !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: var(--list-bullet-size) !important;
+  height: var(--list-bullet-size) !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--list-bullet-color) !important;
+  background-color: transparent !important;
+}
+</style>
+
 <style scoped>
 .latest-articles {
   display: flex;
   flex-direction: column;
-  gap: 0.15em;
+  gap: var(--list-item-gap, 0.15em);
   margin-top: 16px;
 }
 .article-item {
@@ -77,10 +126,10 @@ const latestArticles = frontmatter.value.latestArticles || []
 }
 .bullet {
   flex-shrink: 0;
-  width: 5px;
-  height: 5px;
+  width: var(--list-bullet-size, 5px);
+  height: var(--list-bullet-size, 5px);
   border-radius: 50%;
-  border: 1px solid var(--vp-c-text-2);
+  border: 1px solid var(--list-bullet-color, var(--vp-c-text-2));
   margin-top: 1px;
 }
 .article-title {
