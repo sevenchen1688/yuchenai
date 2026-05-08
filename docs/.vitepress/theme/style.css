@@ -12,55 +12,9 @@
   margin-bottom: 0 !important;
 }
 
-.VPHome .VPHero .image {
-  position: relative !important;
-  padding: 40px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.VPHome .VPHero .image::before {
-  content: '' !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 380px !important;
-  height: 380px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle, rgba(160, 233, 255, 0.4) 0%, rgba(200, 180, 255, 0.3) 40%, rgba(212, 165, 255, 0.2) 70%, transparent 85%) !important;
-  filter: blur(30px) !important;
-  z-index: 0 !important;
-}
-
-.VPHome .VPHero .image::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 280px !important;
-  height: 280px !important;
-  border-radius: 50% !important;
-  background: radial-gradient(circle at 30% 40%, rgba(160, 233, 255, 0.35) 0%, rgba(200, 180, 255, 0.25) 50%, transparent 75%) !important;
-  filter: blur(20px) !important;
-  z-index: 0 !important;
-}
-
-.VPHome .VPHero .image .image-src {
-  position: relative !important;
-  z-index: 1 !important;
-  max-width: 350px !important;
-  max-height: 350px !important;
-  width: 100% !important;
-  height: auto !important;
-  filter: drop-shadow(0 8px 30px rgba(96, 165, 250, 0.3)) !important;
-}
-
 .VPFeatures {
   padding-top: 0 !important;
-  margin-top: -4rem !important;
+  margin-top: -0.5rem !important;
 }
 
 .VPFeature {
