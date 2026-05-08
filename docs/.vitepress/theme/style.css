@@ -14,7 +14,7 @@
 
 .VPHome .VPHero .image {
   position: relative !important;
-  padding: 60px !important;
+  padding: 40px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -26,11 +26,11 @@
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: 300px !important;
-  height: 300px !important;
+  width: 450px !important;
+  height: 450px !important;
   border-radius: 50% !important;
-  background: radial-gradient(circle, rgba(96, 165, 250, 0.25) 0%, rgba(168, 85, 247, 0.15) 40%, rgba(236, 72, 153, 0.08) 70%, transparent 90%) !important;
-  filter: blur(25px) !important;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.55) 0%, rgba(168, 85, 247, 0.4) 40%, rgba(236, 72, 153, 0.25) 70%, transparent 85%) !important;
+  filter: blur(35px) !important;
   z-index: 0 !important;
 }
 
@@ -40,22 +40,22 @@
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: 220px !important;
-  height: 220px !important;
+  width: 340px !important;
+  height: 340px !important;
   border-radius: 50% !important;
-  background: radial-gradient(circle at 30% 40%, rgba(96, 165, 250, 0.2) 0%, rgba(168, 85, 247, 0.12) 50%, transparent 80%) !important;
-  filter: blur(20px) !important;
+  background: radial-gradient(circle at 30% 40%, rgba(96, 165, 250, 0.5) 0%, rgba(168, 85, 247, 0.35) 50%, transparent 75%) !important;
+  filter: blur(25px) !important;
   z-index: 0 !important;
 }
 
 .VPHome .VPHero .image .image-src {
   position: relative !important;
   z-index: 1 !important;
-  max-width: none !important;
-  max-height: none !important;
-  width: auto !important;
+  max-width: 350px !important;
+  max-height: 350px !important;
+  width: 100% !important;
   height: auto !important;
-  filter: drop-shadow(0 8px 20px rgba(96, 165, 250, 0.2)) !important;
+  filter: drop-shadow(0 8px 30px rgba(96, 165, 250, 0.3)) !important;
 }
 
 .VPFeatures {
