@@ -8,6 +8,7 @@ hero:
   image:
     src: /images/logo/logo-large.png
     alt: 雨辰AI工作坊 Logo
+    class: hero-logo-wrapper
   actions:
     - theme: brand
       text: 开始阅读
