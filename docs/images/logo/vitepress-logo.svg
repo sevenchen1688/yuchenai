@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="lightningGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="8" dy="8" stdDeviation="10" flood-color="#3730a3" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <g transform="rotate(-5 200 200)">
+    <rect x="100" y="80" width="200" height="240" rx="20" ry="20" fill="#1e1b4b" filter="url(#shadow)" />
+    <rect x="110" y="90" width="180" height="220" rx="15" ry="15" fill="#ffffff" />
+    <rect x="110" y="90" width="180" height="220" rx="15" ry="15" fill="none" stroke="url(#cardGradient)" stroke-width="4" />
+    
+    <g transform="translate(200, 170)">
+      <polygon points="0,-40 15,-10 5,-10 10,0 -5,0 -10,-20 -15,-20 -5,-10 -25,-10" fill="url(#lightningGradient)" />
+    </g>
+    
+    <rect x="145" y="210" width="110" height="45" rx="8" ry="8" fill="none" stroke="url(#cardGradient)" stroke-width="3" />
+    <text x="185" y="242" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="url(#textGradient)">M</text>
+    <polygon points="235,225 245,240 225,240" fill="url(#textGradient)" />
+  </g>
+  
+  <text x="200" y="350" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="url(#textGradient)" text-anchor="middle">VitePress</text>
+</svg>
