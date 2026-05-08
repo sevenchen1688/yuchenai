@@ -36,9 +36,9 @@ const { frontmatter } = useData()
 const latestArticles = frontmatter.value.latestArticles || []
 </script>
 
-<div class="custom-section">
 ## 我是雨辰
 
+<div class="custom-section">
 <ul class="custom-list">
 <li>🐶 14 年毕业，12 年 Java 开发与技术管理经验，历任技术总监、Java 开发专家，具备从 0 到 1 搭建产品技术架构 + 带领团队交付大型商业项目的完整能力。</li>
 <li>🚀 核心技术：精通 Java 核心与 Spring 全家桶（源码级理解），深耕微服务与 DDD 领域驱动设计；同时掌握工业级 AI 应用开发技术栈（Spring AI/LangChain/RAG/Agent），支持多模态接入与 LLM 应用可观测性建设。</li>
