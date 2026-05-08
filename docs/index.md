@@ -69,12 +69,10 @@ const latestArticles = frontmatter.value.latestArticles || []
   --list-item-gap: 0.15em;
   --list-bullet-size: 5px;
   --list-bullet-color: var(--vp-c-text-2);
-  --list-font-size: 0.95rem;
-  --list-line-height: 1.6;
 }
 
 .custom-section {
-  font-size: var(--list-font-size);
+  font-size: inherit;
 }
 
 .custom-list {
@@ -91,7 +89,7 @@ const latestArticles = frontmatter.value.latestArticles || []
   position: relative !important;
   padding-left: 0 !important;
   margin-bottom: 0 !important;
-  line-height: var(--list-line-height) !important;
+  line-height: inherit !important;
 }
 
 .custom-list li::marker {
