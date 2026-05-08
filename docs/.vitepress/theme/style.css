@@ -72,13 +72,25 @@
 }
 
 .VPHero {
-  padding-top: 6rem !important;
+  padding-top: 4rem !important;
   padding-bottom: 0 !important;
+}
+
+.VPHome .VPHero {
+  padding-bottom: 1rem !important;
+}
+
+.VPHero .actions {
+  padding-bottom: 1.5rem !important;
 }
 
 .VPFeatures {
   padding-top: 0 !important;
   margin-top: 0 !important;
+}
+
+.VPFeature {
+  padding: 1rem !important;
 }
 
 .VPHero .name {
