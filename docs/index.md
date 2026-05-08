@@ -36,6 +36,16 @@ const { frontmatter } = useData()
 const latestArticles = frontmatter.value.latestArticles || []
 </script>
 
+## 我是雨辰
+
+- 🐶 14 年毕业，12 年 Java 开发与技术管理经验，历任技术总监、Java 开发专家，具备从 0 到 1 搭建产品技术架构 + 带领团队交付大型商业项目的完整能力。
+
+- 🚀 核心技术：精通 Java 核心与 Spring 全家桶（源码级理解），深耕微服务与 DDD 领域驱动设计；同时掌握工业级 AI 应用开发技术栈（Spring AI/LangChain/RAG/Agent），支持多模态接入与 LLM 应用可观测性建设。
+
+- 🌱 干货：公众号『雨辰学 AI』
+- 📝 博客：yuchenaitech.cn
+- 💌 微信：yuchenai2035 - 备注来意
+
 ## 从这里开始探索
 
 这里记录我在编程语言（Java / Python）、AI 技术、以及项目实战中的学习与思考，希望能帮助你少走一些弯路。
