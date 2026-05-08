@@ -185,7 +185,6 @@ export default defineConfig({
 
 
   themeConfig: {
-    logo: '/images/logo/logo.png',
     nav: [
       { text: '首页', link: '/' },
       { text: blogNavLabels['ai-fundamentals'], link: findFirstArticleLink('ai-fundamentals') },

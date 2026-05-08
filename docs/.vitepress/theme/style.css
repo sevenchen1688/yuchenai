@@ -53,6 +53,11 @@
   color: var(--vp-c-text-2) !important;
 }
 
+.VPNavBarTitle {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
 strong, b {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.12) 100%);
   padding: 0.08em 0.45em;
