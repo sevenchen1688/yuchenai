@@ -164,9 +164,10 @@ const latestArticles = frontmatter.value.latestArticles || []
 
 .contact-section {
   margin-top: 1rem;
-  margin-bottom: 0;
+  margin-bottom: -2rem;
   padding-top: 0;
   padding-bottom: 0;
+  line-height: 1;
 }
 
 .qr-container {
@@ -210,5 +211,14 @@ const latestArticles = frontmatter.value.latestArticles || []
   color: var(--vp-c-text-2);
   font-weight: 500;
   text-align: center;
+}
+
+:deep(.theme-default-content) {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+:deep(.VPFooter) {
+  padding-top: 0 !important;
 }
 </style>
