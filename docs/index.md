@@ -64,6 +64,31 @@ const latestArticles = frontmatter.value.latestArticles || []
   <p>暂无文章</p>
 </div>
 
+## 联系我
+
+<div class="contact-section">
+  <div class="qr-container">
+    <div class="qr-item">
+      <div class="qr-wrapper">
+        <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=WeChat%20official%20account%20QR%20code%20with%20blue%20theme%20gradient%20logo%20center&image_size=square" alt="公众号" class="qr-image" />
+      </div>
+      <span class="qr-label">公众号 · 雨辰学 AI</span>
+    </div>
+    <div class="qr-item">
+      <div class="qr-wrapper">
+        <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=Xiaohongshu%20Little%20Red%20Book%20social%20media%20QR%20code%20with%20pink%20theme&image_size=square" alt="小红书" class="qr-image" />
+      </div>
+      <span class="qr-label">小红书 · 雨辰学 AI</span>
+    </div>
+    <div class="qr-item">
+      <div class="qr-wrapper">
+        <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=Personal%20WeChat%20QR%20code%20with%20blue%20WeChat%20icon%20center&image_size=square" alt="个人微信" class="qr-image" />
+      </div>
+      <span class="qr-label">个人微信 · yuchenai2035</span>
+    </div>
+  </div>
+</div>
+
 <style>
 :root {
   --list-item-gap: 0.15em;
@@ -135,5 +160,56 @@ const latestArticles = frontmatter.value.latestArticles || []
 .article-title {
   font-weight: 500;
   color: var(--vp-c-brand);
+}
+
+.contact-section {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.06) 100%);
+  border-radius: 16px;
+  border: 1px solid var(--vp-c-divider);
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.qr-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qr-wrapper {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qr-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+}
+
+.qr-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qr-label {
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+  text-align: center;
 }
 </style>
