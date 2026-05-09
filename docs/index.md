@@ -70,19 +70,19 @@ const latestArticles = frontmatter.value.latestArticles || []
   <div class="qr-container">
     <div class="qr-item">
       <div class="qr-wrapper">
-        <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=QR%20code%20WeChat%20official%20account%20blue%20theme%20professional&image_size=square_hd" alt="公众号" class="qr-image" />
+        <img src="https://picsum.photos/seed/wechat/140/140" alt="公众号" class="qr-image" />
       </div>
       <span class="qr-label">公众号 · 雨辰学 AI</span>
     </div>
     <div class="qr-item">
       <div class="qr-wrapper">
-        <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=QR%20code%20Xiaohongshu%20pink%20theme%20social%20media&image_size=square_hd" alt="小红书" class="qr-image" />
+        <img src="https://picsum.photos/seed/xiaohongshu/140/140" alt="小红书" class="qr-image" />
       </div>
       <span class="qr-label">小红书 · 雨辰学 AI</span>
     </div>
     <div class="qr-item">
       <div class="qr-wrapper">
-        <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=QR%20code%20WeChat%20personal%20blue%20icon%20white%20background&image_size=square_hd" alt="个人微信" class="qr-image" />
+        <img src="https://picsum.photos/seed/personal/140/140" alt="个人微信" class="qr-image" />
       </div>
       <span class="qr-label">个人微信 · yuchenai2035</span>
     </div>
