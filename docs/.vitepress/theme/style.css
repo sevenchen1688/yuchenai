@@ -164,10 +164,20 @@ strong, b {
 
 .VPHome .theme-default-content {
   padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
+  margin-bottom: -1rem !important;
 }
 
 .VPFooter {
   padding-top: 0 !important;
   margin-top: 0 !important;
+}
+
+.VPHome article {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.VPHome .content-container {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
 }
