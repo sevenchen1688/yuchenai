@@ -164,12 +164,12 @@ strong, b {
 
 .VPHome .theme-default-content {
   padding-bottom: 0 !important;
-  margin-bottom: -1rem !important;
+  margin-bottom: 0 !important;
 }
 
 .VPFooter {
   padding-top: 0 !important;
-  margin-top: 0 !important;
+  margin-top: -2rem !important;
 }
 
 .VPHome article {
@@ -177,7 +177,15 @@ strong, b {
   margin-bottom: 0 !important;
 }
 
-.VPHome .content-container {
+.VPContent {
   padding-bottom: 0 !important;
+}
+
+.VPHome .main {
+  padding-bottom: 0 !important;
+}
+
+.theme-default-content > :last-child {
   margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
