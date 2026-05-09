@@ -64,6 +64,31 @@ const latestArticles = frontmatter.value.latestArticles || []
   <p>暂无文章</p>
 </div>
 
+## 联系我
+
+<div class="contact-section">
+  <div class="qr-container">
+    <div class="qr-item">
+      <div class="qr-wrapper">
+        <img src="/images/conchatme/wechatQcode.jpg" alt="公众号" class="qr-image" />
+      </div>
+      <span class="qr-label">公众号 · 雨辰学 AI</span>
+    </div>
+    <div class="qr-item">
+      <div class="qr-wrapper">
+        <img src="/images/conchatme/xiaohongshuQcode.jpg" alt="小红书" class="qr-image" />
+      </div>
+      <span class="qr-label">小红书 · 雨辰学 AI</span>
+    </div>
+    <div class="qr-item">
+      <div class="qr-wrapper">
+        <img src="/images/conchatme/PersonalQcode.jpg" alt="个人微信" class="qr-image" />
+      </div>
+      <span class="qr-label">个人微信 · yuchenai2035</span>
+    </div>
+  </div>
+</div>
+
 <style>
 :root {
   --list-item-gap: 0.15em;
@@ -135,5 +160,53 @@ const latestArticles = frontmatter.value.latestArticles || []
 .article-title {
   font-weight: 500;
   color: var(--vp-c-brand);
+}
+
+.contact-section {
+  margin-top: 2rem;
+  padding: 1rem 0;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.qr-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qr-wrapper {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qr-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+}
+
+.qr-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qr-label {
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+  text-align: center;
 }
 </style>
