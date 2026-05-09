@@ -64,7 +64,7 @@ const latestArticles = frontmatter.value.latestArticles || []
   <p>暂无文章</p>
 </div>
 
-## 联系我
+## 联系我 - 可加技术交流群
 
 <div class="contact-section">
   <div class="qr-container">
