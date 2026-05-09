@@ -163,8 +163,10 @@ const latestArticles = frontmatter.value.latestArticles || []
 }
 
 .contact-section {
-  margin-top: 1rem;
-  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .qr-container {
@@ -179,7 +181,7 @@ const latestArticles = frontmatter.value.latestArticles || []
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
 
 .qr-wrapper {
