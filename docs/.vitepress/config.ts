@@ -211,7 +211,7 @@ export default defineConfig({
 
     footer: {
       message: '基于 VitePress 构建',
-      copyright: '© 2026 雨辰AI工作坊'
+      copyright: '© 2026 雨辰AI工作坊 | <img src="/beian.png" style="width:16px;height:16px;vertical-align:middle;margin-right:2px;display:inline;" /><a href="https://beian.mps.gov.cn/#/query/webSearch?code=44010602015939" rel="noreferrer" target="_blank">粤公网安备44010602015939号</a>'
     }
   }
 })
