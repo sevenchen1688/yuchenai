@@ -48,9 +48,11 @@ const latestArticles = frontmatter.value.latestArticles || []
 </ul>
 </div>
 
-## 从这里开始探索
+<!-- ## 从这里开始探索
 
-这里记录我在编程语言（Java / Python）、AI 技术、以及项目实战中的学习与思考，希望能帮助你少走一些弯路。
+这里记录我在编程语言（Java / Python）、AI 技术、以及项目实战中的学习与思考，希望能帮助你少走一些弯路。 -->
+
+--- 
 
 ### 最新文章
 
@@ -63,6 +65,7 @@ const latestArticles = frontmatter.value.latestArticles || []
 <div v-else>
   <p>暂无文章</p>
 </div>
+
 
 ## 联系我 - 可加技术交流群
 
