@@ -86,7 +86,7 @@ export function buildSlugConfig(docsDir: string): {
     for (const [slug, file] of Object.entries(slugs)) {
       const srcPath = `${urlPrefix}${file}`
       const urlPath = `${urlPrefix}${slug}`
-      rewrites[srcPath] = urlPath
+      rewrites[srcPath] = `${urlPath}.md`
       resolveMap[slug] = join(dir, file)
     }
 

@@ -48,7 +48,7 @@ function getLatestArticles(limit: number = 10) {
       if (urlPath) {
         articles.push({
           title: getArticleTitle(absPath),
-          url: '/' + urlPath,
+          url: '/' + urlPath.replace(/\.md$/, ''),
           date: stat.birthtimeMs
         })
       }
@@ -96,6 +96,7 @@ export default defineConfig({
   },
 
   base: '/',
+  cleanUrls: true,
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
