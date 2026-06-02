@@ -108,16 +108,8 @@ export function findFirstCategoryArticle(): string {
 }
 
 export function generateSidebar(navLabels: Record<string, string>): Record<string, any[]> {
-  const sidebar: Record<string, any[]> = {
-    '/blog/': [
-      {
-        text: '博客文章',
-        items: [] as any[]
-      }
-    ]
-  }
+  const sidebar: Record<string, any[]> = {}
 
-  // blog root articles (use slugs)
   let subdirs: string[]
   try {
     subdirs = readdirSync(join(docsDir, 'blog'), { withFileTypes: true })
@@ -128,14 +120,28 @@ export function generateSidebar(navLabels: Record<string, string>): Record<strin
   }
 
   for (const subdir of subdirs) {
-    if (existsSync(join(docsDir, 'blog', subdir, 'config.json'))) {
-      const subdirPath = join(docsDir, 'blog', subdir)
-      const label = navLabels[subdir] || getArticleTitle(join(subdirPath, 'index.md'))
-      sidebar['/blog/'].push({
+    const subdirPath = join(docsDir, 'blog', subdir)
+    const hasConfig = existsSync(join(subdirPath, 'config.json'))
+    const label = navLabels[subdir] || getArticleTitle(join(subdirPath, 'index.md'))
+    const sidebarKey = `/blog/${subdir}/`
+
+    if (hasConfig) {
+      sidebar[sidebarKey] = [{
         text: label,
         collapsed: false,
         items: buildSidebarForDir(subdir)
-      })
+      }]
+    } else {
+      const files = listArticles(subdirPath).sort()
+      if (files.length === 0) continue
+      sidebar[sidebarKey] = [{
+        text: label,
+        collapsed: false,
+        items: files.map(file => ({
+          text: getArticleTitle(join(subdirPath, file)),
+          link: `/blog/${subdir}/${getSlug(subdirPath, file)}`
+        }))
+      }]
     }
   }
 

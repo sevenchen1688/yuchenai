@@ -55,7 +55,30 @@ export function generateBlogListing(docsDir: string): BlogListing {
     const subdirPath = join(blogDir, subdir)
     const configs = readBlogConfig(subdir)
 
-    if (configs.length === 0) continue
+    const indexPath = join(subdirPath, 'index.md')
+    const catTitle = (() => {
+      const t = getArticleTitle(indexPath)
+      return t !== 'index' ? t : subdir
+    })()
+
+    if (configs.length === 0) {
+      // Flat directory — articles directly in this dir
+      const articles: ArticleItem[] = []
+      for (const file of listArticles(subdirPath).sort()) {
+        articles.push({
+          title: getArticleTitle(join(subdirPath, file)),
+          link: `/blog/${subdir}/${getSlug(subdirPath, file)}`
+        })
+      }
+      if (articles.length === 0) continue
+      categories.push({
+        dirName: subdir,
+        title: catTitle,
+        link: `/blog/${subdir}/`,
+        subcategories: [{ title: catTitle, engName: subdir, articles }]
+      })
+      continue
+    }
 
     const subcategories: SubcategoryGroup[] = []
 
@@ -75,11 +98,9 @@ export function generateBlogListing(docsDir: string): BlogListing {
     }
 
     if (subcategories.length > 0) {
-      const indexPath = join(subdirPath, 'index.md')
-      const title = getArticleTitle(indexPath)
       categories.push({
         dirName: subdir,
-        title: title !== 'index' ? title : subdir,
+        title: catTitle,
         link: `/blog/${subdir}/`,
         subcategories
       })
