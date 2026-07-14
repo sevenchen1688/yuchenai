@@ -156,6 +156,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   margin-left: 0 !important;
 }
 
+/* 关键修复：VitePress 默认 .group { width: calc(var(--vp-sidebar-width) - 64px) }
+   导致菜单只占 296px（360-64），右侧浪费 64px。
+   改为撑满侧边栏全宽。 */
+.VPSidebar .group {
+  width: 100% !important;
+}
+
 /* 侧边栏内所有横向分割线延伸至左边缘 */
 .VPSidebar .group + .group,
 .VPSidebarGroup + .VPSidebarGroup {
@@ -167,7 +174,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   border-radius: 0 20px 20px 0;
   margin-right: 0;
   padding-left: 20px;
-  padding-right: 12px;
+  padding-right: 10px;
+  width: calc(100% - 15px);
   transition: background 0.25s ease, color 0.25s ease;
 }
 
@@ -179,6 +187,31 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
   font-weight: 600;
+}
+
+/* 文章序号圆圈 */
+.article-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--vp-c-text-3);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--vp-c-text-2);
+  margin-right: 6px;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: all 0.25s ease;
+}
+
+/* 选中时圆圈线条变蓝，数字也变蓝 */
+.VPSidebarItem.is-active .article-num {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
 }
 
 /* 侧边栏分组标题 */

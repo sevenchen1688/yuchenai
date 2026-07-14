@@ -24,11 +24,15 @@ function getFileNumber(fileName: string): string {
   return m ? m[1] : ''
 }
 
-/** 生成带序号的侧边栏显示文本，如 "02. AI技术四项分类" */
+/** 生成带序号的侧边栏显示文本，如 "<span class="article-num">2</span> AI技术四项分类" */
 function numberedText(filePath: string): string {
   const num = getFileNumber(basename(filePath))
   const title = getArticleTitle(filePath)
-  return num ? `${num}. ${title}` : title
+  if (num) {
+    const displayNum = parseInt(num, 10).toString()
+    return `<span class="article-num">${displayNum}</span> ${title}`
+  }
+  return title
 }
 
 export function listArticles(absoluteDir: string): string[] {
