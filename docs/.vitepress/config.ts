@@ -99,7 +99,10 @@ export default defineConfig({
   base: '/',
   cleanUrls: true,
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap' }],
   ],
 
   rewrites: slugConfig.rewrites,
@@ -187,6 +190,13 @@ export default defineConfig({
 
 
   themeConfig: {
+    outline: { label: '大纲' },
+
+    docFooter: {
+      prev: '上一篇',
+      next: '下一篇'
+    },
+
     nav: [
       { text: '首页', link: '/' },
       { text: blogNavLabels['ai-fundamentals'], link: findFirstArticleLink('ai-fundamentals') },

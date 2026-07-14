@@ -18,6 +18,19 @@ export function getArticleTitle(mdPath: string): string {
   }
 }
 
+/** 从文件名提取序号，如 "02.xxx.md" → "02" */
+function getFileNumber(fileName: string): string {
+  const m = fileName.match(/^(\d+)\./)
+  return m ? m[1] : ''
+}
+
+/** 生成带序号的侧边栏显示文本，如 "02. AI技术四项分类" */
+function numberedText(filePath: string): string {
+  const num = getFileNumber(basename(filePath))
+  const title = getArticleTitle(filePath)
+  return num ? `${num}. ${title}` : title
+}
+
 export function listArticles(absoluteDir: string): string[] {
   try {
     return readdirSync(absoluteDir).filter(f => f.endsWith('.md') && f !== 'index.md')
@@ -49,7 +62,7 @@ function buildSidebarForDir(subdir: string): any[] {
     return {
       text: `${chn}(${files.length})`,
       items: files.map(file => ({
-        text: getArticleTitle(join(dir, file)),
+        text: numberedText(join(dir, file)),
         link: `/blog/${subdir}/${eng}/${getSlug(dir, file)}`
       }))
     }
@@ -138,7 +151,7 @@ export function generateSidebar(navLabels: Record<string, string>): Record<strin
         text: label,
         collapsed: false,
         items: files.map(file => ({
-          text: getArticleTitle(join(subdirPath, file)),
+          text: numberedText(join(subdirPath, file)),
           link: `/blog/${subdir}/${getSlug(subdirPath, file)}`
         }))
       }]
