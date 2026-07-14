@@ -681,8 +681,25 @@ strong, b {
 /* 中间文章内容区 —— 自适应填充剩余全部宽度 */
 .VPDoc .container {
   max-width: none !important;
-  padding-left: 48px !important;
-  padding-right: 48px !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+/* 减薄 VPDoc 外层 padding */
+.VPDoc {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* content 与左右两栏仅保留 15px 间距 */
+.VPDoc .content {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+
+/* 解除 content-container 的 688px 宽度限制 */
+.VPDoc.has-aside .content-container {
+  max-width: none !important;
 }
 
 /* 右侧目录 —— 紧贴浏览器右边缘（含容器链路） */
