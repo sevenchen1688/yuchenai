@@ -60,7 +60,7 @@
   --vp-nav-bg-color: rgba(255, 255, 255, 0.85);
 
   /* 侧边栏宽度 */
-  --vp-sidebar-width: 360px;
+  --vp-sidebar-width: 300px;
 
   /* 列表 */
   --list-item-gap: 0.15em;
@@ -107,8 +107,44 @@
 html { scroll-behavior: smooth; }
 body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
+/* ===== Focus 可见样式（键盘导航） ===== */
+:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 按钮、链接等交互元素的键盘焦点 */
+a:focus-visible,
+button:focus-visible,
+.VPButton:focus-visible,
+.VPNavBarMenuLink:focus-visible,
+.VPSidebarItem .item:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ===== prefers-reduced-motion：尊重用户动效偏好 ===== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Nav 毛玻璃 + 标题左贴边 */
 .VPNav { backdrop-filter: blur(12px); }
+
+/* backdrop-filter fallback：不支持毛玻璃的浏览器显示纯色 */
+@supports not (backdrop-filter: blur(1px)) {
+  .VPNav { background: var(--vp-nav-bg-color); }
+}
 .VPNavBarTitle { font-size: 1.25rem !important; font-weight: 700 !important; letter-spacing: -0.02em; }
 
 /* Nav 标题靠左贴边：消除内容页 sidebar 模式下的标题左内边距。
@@ -136,7 +172,21 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   padding-top: 0 !important;
 }
 
-/* ===== 侧边栏 - 圆角激活态 ===== */
+/* ===== 侧边栏 - 层级对齐体系 =====
+
+   DOM 层级（VitePress 递归渲染）：
+     level-0  → "AI通识"                  — sidebar section 标题
+     level-1  → "📖 AI基础(6)"            — 分类标题（有子项）
+     level-2  → "1 AI发展70年"            — 文章叶子节点
+
+   对齐目标：
+     AI通识                   贴近左侧
+       📖 AI基础(6)           文字与文章对齐
+          1 AI发展70年        左侧与 AI基础 对齐
+          2 图灵测试           同上
+       ⚙️ 技术原理(3)         同上
+          1 AI核心概念         同上
+   ======================================================== */
 
 /* 侧边栏顶部标题和分割线彻底贴左 */
 .VPSidebar > .group {
@@ -170,13 +220,39 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   padding-left: 0 !important;
 }
 
+/* -------------------------------------------------------
+   ① 复位所有层级的容器 padding，统一由 .item 控制
+   ------------------------------------------------------- */
+.VPSidebarItem.level-0,
+.VPSidebarItem.level-1,
+.VPSidebarItem.level-2 {
+  padding-left: 0 !important;
+}
+
+/* 复位 VitePress 默认在 .items 上的缩进（scoped: padding-left: 16px） */
+.VPSidebarItem.level-0 > .items,
+.VPSidebarItem.level-1 > .items,
+.VPSidebarItem.level-2 > .items,
+.VPSidebarItem.level-3 > .items,
+.VPSidebarItem.level-4 > .items,
+.VPSidebarItem.level-5 > .items {
+  padding-left: 0 !important;
+  border-left: none !important;
+}
+
+/* -------------------------------------------------------
+   ② 通用 .item 基础样式
+   ------------------------------------------------------- */
 .VPSidebarItem .item {
   border-radius: 0 20px 20px 0;
   margin-right: 0;
+  padding-top: 4px;
+  padding-bottom: 4px;
   padding-left: 20px;
   padding-right: 10px;
   width: calc(100% - 15px);
   transition: background 0.25s ease, color 0.25s ease;
+  cursor: pointer;
 }
 
 .VPSidebarItem .item:hover {
@@ -189,38 +265,86 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   font-weight: 600;
 }
 
-/* 文章序号圆圈 */
-.article-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1px solid var(--vp-c-text-3);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1;
-  color: var(--vp-c-text-2);
-  margin-right: 6px;
-  flex-shrink: 0;
-  vertical-align: middle;
-  transition: all 0.25s ease;
-}
-
-/* 选中时圆圈线条变蓝，数字也变蓝 */
-.VPSidebarItem.is-active .article-num {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
-}
-
-/* 侧边栏分组标题 */
+/* -------------------------------------------------------
+   ③ level-0："AI通识" — 贴近左侧
+   ------------------------------------------------------- */
 .VPSidebarItem.level-0 > .item > .text {
   font-size: 13px;
   font-weight: 600;
   color: var(--vp-c-text-3);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+/* -------------------------------------------------------
+   ④ level-1 默认 = 分类标题（如 "📖 AI基础"），图标 + 缩进
+   ------------------------------------------------------- */
+.VPSidebarItem.level-1 .item {
+  position: relative;
+  padding-left: 50px;
+}
+
+/* 分类图标（emoji）：贴在左侧专属区 */
+.category-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* -------------------------------------------------------
+   ⑤ 文章叶子节点（任意层级）— 悬挂缩进 + 序号垂直居中
+     .is-link:not(.collapsible) 排除有子项的分类标题
+   ------------------------------------------------------- */
+.VPSidebarItem.is-link:not(.collapsible) .item {
+  padding-left: 20px !important;
+  position: initial !important;
+}
+
+/* 序号+标题的行容器：flex 布局 */
+.article-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.article-row > .article-num {
+  flex-shrink: 0 !important;
+}
+
+.article-row > .article-title {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+}
+
+/* 基础样式 */
+.article-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--vp-c-text-3);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--vp-c-text-2);
+  transition: all 0.25s ease;
+}
+
+.article-title {
+  line-height: 24px;
+}
+
+/* 选中时圆圈线条变蓝，数字也变蓝 */
+.VPSidebarItem.is-active .article-num {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
 }
 
 /* ===== Home 列表样式 ===== */
@@ -647,6 +771,14 @@ strong, b {
   color: var(--vp-c-text-2);
 }
 
+/* ===== 点击元素光标样式 ===== */
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup button,
+.VPSocialLink,
+.VPFeature .VPFeature {
+  cursor: pointer;
+}
+
 /* ===== 三栏极致贴边布局 ===== */
 
 /* 全局解除宽度限制 */
@@ -691,15 +823,15 @@ strong, b {
   padding-right: 0 !important;
 }
 
-/* content 与左右两栏仅保留 15px 间距 */
+/* content 与左右两栏保留舒适间距 */
 .VPDoc .content {
-  padding-left: 15px !important;
-  padding-right: 15px !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
 }
 
-/* 解除 content-container 的 688px 宽度限制 */
+/* 解除 content-container 的 688px 宽度限制，但要控制最大行宽保证阅读舒适 */
 .VPDoc.has-aside .content-container {
-  max-width: none !important;
+  max-width: min(780px, 100%) !important;
 }
 
 /* 右侧目录 —— 紧贴浏览器右边缘（含容器链路） */
@@ -731,6 +863,13 @@ strong, b {
 /* 首页不适用三栏布局，保持原样 */
 .VPHome .VPDoc .container {
   max-width: none !important;
+}
+
+/* ===== Features 区 SVG 图标样式 ===== */
+.VPFeatures .VPFeature .icon svg {
+  width: 28px;
+  height: 28px;
+  color: var(--vp-c-brand-1);
 }
 
 /* ===== 页脚 ===== */

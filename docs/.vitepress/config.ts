@@ -100,6 +100,13 @@ export default defineConfig({
   cleanUrls: true,
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['meta', { property: 'og:title', content: '雨辰AI工作坊' }],
+    ['meta', { property: 'og:description', content: '探索AI · 构建未来 — 个人技术博客，分享Java、AI Agent、大模型应用开发等内容' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:url', content: 'https://yuchenaitech.cn' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: '雨辰AI工作坊' }],
+    ['meta', { name: 'twitter:description', content: '探索AI · 构建未来 — 个人技术博客' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
     ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap' }],

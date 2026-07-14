@@ -24,13 +24,13 @@ function getFileNumber(fileName: string): string {
   return m ? m[1] : ''
 }
 
-/** 生成带序号的侧边栏显示文本，如 "<span class="article-num">2</span> AI技术四项分类" */
+/** 生成带序号的侧边栏显示文本 */
 function numberedText(filePath: string): string {
   const num = getFileNumber(basename(filePath))
   const title = getArticleTitle(filePath)
   if (num) {
     const displayNum = parseInt(num, 10).toString()
-    return `<span class="article-num">${displayNum}</span> ${title}`
+    return `<span class="article-row"><span class="article-num">${displayNum}</span><span class="article-title">${title}</span></span>`
   }
   return title
 }
@@ -57,14 +57,25 @@ export function readBlogConfig(subdir: string): { eng: string; chn: string }[] {
   }
 }
 
+/** 分类名 → emoji 图标映射 */
+function categoryIcon(chn: string): string {
+  const icons: Record<string, string> = {
+    'AI基础': '📖',
+    '技术原理': '⚙️',
+  }
+  return icons[chn] || ''
+}
+
 function buildSidebarForDir(subdir: string): any[] {
   const configs = readBlogConfig(subdir)
   const basePath = join(docsDir, 'blog', subdir)
   return configs.map(({ eng, chn }) => {
     const dir = join(basePath, eng)
     const files = listArticles(dir)
+    const icon = categoryIcon(chn)
+    const iconHtml = icon ? `<span class="category-icon">${icon}</span> ` : ''
     return {
-      text: `${chn}(${files.length})`,
+      text: `${iconHtml}${chn}(${files.length})`,
       items: files.map(file => ({
         text: numberedText(join(dir, file)),
         link: `/blog/${subdir}/${eng}/${getSlug(dir, file)}`
