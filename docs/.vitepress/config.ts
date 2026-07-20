@@ -64,7 +64,8 @@ const firstArticleLink = findFirstCategoryArticle()
 
 const blogNavLabels: Record<string, string> = {
   'ai-fundamentals': 'AI通识',
-  'ai-thoughts': 'AI思考'
+  'ai-thoughts': 'AI杂谈',
+  'AI-Agent': 'AI Agent'
 }
 
 export default defineConfig({
@@ -207,6 +208,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: blogNavLabels['ai-fundamentals'], link: findFirstArticleLink('ai-fundamentals') },
+      { text: blogNavLabels['AI-Agent'], link: findFirstArticleLink('AI-Agent') },
       { text: blogNavLabels['ai-thoughts'], link: findFirstArticleLink('ai-thoughts') },
       { text: '关于', link: '/about' }
     ],

@@ -62,6 +62,12 @@ function categoryIcon(chn: string): string {
   const icons: Record<string, string> = {
     'AI基础': '📖',
     '技术原理': '⚙️',
+    'Agent基础': '📖',
+    'Agent的大脑': '🧠',
+    'Agent的手脚': '🔧',
+    'Agent的协作与编排': '🤝',
+    '框架与平台': '🛠️',
+    '综合实践': '🚀',
   }
   return icons[chn] || ''
 }

@@ -2,6 +2,7 @@ import { h, defineComponent, type PropType, onMounted, watch } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import { useData } from 'vitepress'
+import ImageLightbox from './ImageLightbox.vue'
 import './style.css'
 
 export default {
@@ -16,7 +17,7 @@ export default {
     },
     setup(props) {
       const { frontmatter, page } = useData()
-      
+
       const updateButton = () => {
         if (page.value.relativePath === 'index.md' && frontmatter.value.firstArticleLink) {
           setTimeout(() => {
@@ -29,20 +30,21 @@ export default {
           }, 100)
         }
       }
-      
+
       onMounted(() => {
         updateButton()
       })
-      
+
       watch(() => page.value.relativePath, () => {
         updateButton()
       })
 
-      return () => {
-        return h(DefaultTheme.Layout, {
+      return () => [
+        h(DefaultTheme.Layout, {
           frontmatter: props.frontmatter
-        })
-      }
+        }),
+        h(ImageLightbox)
+      ]
     }
   })
 } satisfies Theme
