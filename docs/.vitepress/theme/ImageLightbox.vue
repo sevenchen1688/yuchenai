@@ -16,25 +16,50 @@
           <path d="M18 6L6 18M6 6l12 12"/>
         </svg>
       </button>
+
+      <button v-if="hasPrev" class="lightbox-nav lightbox-prev" @click="prev" aria-label="上一张">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+
       <div class="lightbox-image-wrapper" :style="{ cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }">
         <img
-          :src="src"
-          :alt="alt"
+          :key="currentImage?.src"
+          :src="currentImage?.src"
+          :alt="currentImage?.alt"
           class="lightbox-image"
           :style="{ transform: imageTransform }"
+          @load="onImageLoaded"
         />
       </div>
-      <div class="lightbox-hint" v-if="scale <= 1">滚轮缩放 · 点击遮罩关闭</div>
+
+      <button v-if="hasNext" class="lightbox-nav lightbox-next" @click="next" aria-label="下一张">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+
+      <div class="lightbox-counter" v-if="total > 1">
+        {{ currentIdx + 1 }} / {{ total }}
+      </div>
+
+      <div class="lightbox-hint" v-if="scale <= 1">滚轮缩放 · 方向键切换 · 点击遮罩关闭</div>
     </div>
   </Teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
 
+interface ImageItem {
+  src: string
+  alt: string
+}
+
+const images = ref<ImageItem[]>([])
+const currentIdx = ref(0)
 const visible = ref(false)
-const src = ref('')
-const alt = ref('')
 const scale = ref(1)
 const translateX = ref(0)
 const translateY = ref(0)
@@ -42,25 +67,56 @@ const isDragging = ref(false)
 const dragStart = ref({ x: 0, y: 0 })
 const dragOrigin = ref({ x: 0, y: 0 })
 
+const currentImage = computed(() => images.value[currentIdx.value] ?? null)
+const hasPrev = computed(() => visible.value && currentIdx.value > 0)
+const hasNext = computed(() => visible.value && currentIdx.value < images.value.length - 1)
+const total = computed(() => images.value.length)
+
 const imageTransform = computed(() =>
   `translate(${translateX.value}px, ${translateY.value}px) scale(${scale.value})`
 )
 
+function collectImages() {
+  const imgs = document.querySelectorAll<HTMLImageElement>('.main img')
+  images.value = Array.from(imgs).map(img => ({
+    src: img.src,
+    alt: img.alt
+  }))
+}
+
 function open(imgSrc: string, imgAlt: string = '') {
-  src.value = imgSrc
-  alt.value = imgAlt
+  collectImages()
+  const idx = images.value.findIndex(img => img.src === imgSrc)
+  currentIdx.value = idx >= 0 ? idx : 0
+  resetTransform()
   visible.value = true
-  scale.value = 1
-  translateX.value = 0
-  translateY.value = 0
   document.body.style.overflow = 'hidden'
 }
 
 function close() {
   visible.value = false
   document.body.style.overflow = ''
-  src.value = ''
-  alt.value = ''
+  images.value = []
+}
+
+function resetTransform() {
+  scale.value = 1
+  translateX.value = 0
+  translateY.value = 0
+}
+
+function goTo(idx: number) {
+  if (idx < 0 || idx >= images.value.length) return
+  currentIdx.value = idx
+  resetTransform()
+}
+
+function prev() {
+  if (hasPrev.value) goTo(currentIdx.value - 1)
+}
+
+function next() {
+  if (hasNext.value) goTo(currentIdx.value + 1)
 }
 
 function handleWheel(e: WheelEvent) {
@@ -87,9 +143,18 @@ function handleMouseUp() {
   isDragging.value = false
 }
 
+function onImageLoaded() {
+  // reset zoom when image changes
+}
+
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && visible.value) {
+  if (!visible.value) return
+  if (e.key === 'Escape') {
     close()
+  } else if (e.key === 'ArrowLeft') {
+    prev()
+  } else if (e.key === 'ArrowRight') {
+    next()
   }
 }
 
@@ -131,6 +196,7 @@ onUnmounted(() => {
   to { opacity: 1; }
 }
 
+/* Close button */
 .lightbox-close {
   position: absolute;
   top: 16px;
@@ -152,8 +218,41 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* Navigation arrows */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 1;
+}
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+.lightbox-prev {
+  left: 20px;
+}
+.lightbox-next {
+  right: 20px;
+}
+.lightbox-nav:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Image wrapper */
 .lightbox-image-wrapper {
-  max-width: 90vw;
+  max-width: 85vw;
   max-height: 90vh;
   display: flex;
   align-items: center;
@@ -173,12 +272,27 @@ onUnmounted(() => {
   transition: transform 0.05s linear;
 }
 
+/* Counter */
+.lightbox-counter {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px 12px;
+  border-radius: 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
 .lightbox-hint {
   position: absolute;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 13px;
   pointer-events: none;
   user-select: none;
