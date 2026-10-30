@@ -82,12 +82,6 @@ const latestArticles = frontmatter.value.latestArticles || []
     </div>
     <div class="qr-item">
       <div class="qr-wrapper">
-        <img src="/images/conchatme/xiaohongshuQcode.jpg" alt="小红书" class="qr-image" />
-      </div>
-      <span class="qr-label">小红书 · 雨辰AI工作坊</span>
-    </div>
-    <div class="qr-item">
-      <div class="qr-wrapper">
         <img src="/images/conchatme/PersonalQcode.jpg" alt="个人微信" class="qr-image" />
       </div>
       <span class="qr-label">个人微信 · yuchenai2035</span>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>机器为什么能学：神经网络 80 年发展史</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f0eee9; color: #2c2a26; line-height: 1.85; font-size: 16px; }
+  article { max-width: 780px; margin: 0 auto; background: #fff; padding: 48px 44px 64px; box-shadow: 0 1px 8px rgba(0,0,0,.06); }
+  .kicker { font-size: 13px; letter-spacing: 2px; color: #854f0b; font-weight: 500; margin-bottom: 10px; }
+  h1 { font-size: 32px; line-height: 1.35; font-weight: 600; margin-bottom: 12px; }
+  .subtitle { font-size: 16px; color: #6b675f; margin-bottom: 28px; }
+  .meta { font-size: 13px; color: #8a8578; border-top: 1px solid #eae7e0; border-bottom: 1px solid #eae7e0; padding: 12px 0; margin-bottom: 32px; }
+  .meta a { color: #185fa5; text-decoration: none; }
+  h2 { font-size: 23px; font-weight: 600; margin: 52px 0 18px; padding-left: 14px; border-left: 4px solid #185fa5; }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; }
+  p { margin-bottom: 16px; }
+  ul, ol { margin: 0 0 16px 22px; }
+  li { margin-bottom: 8px; }
+  strong { font-weight: 600; }
+  .lede { font-size: 17px; color: #44403a; }
+  img.cover { width: 100%; border-radius: 12px; margin-bottom: 8px; }
+  figure { margin: 28px 0; }
+  figure img { width: 100%; border-radius: 10px; }
+  figcaption { font-size: 12.5px; color: #8a8578; text-align: center; margin-top: 8px; }
+  .demo { background: #f8f7f4; border: 1px solid #e8e5de; border-radius: 14px; padding: 22px 22px 18px; margin: 28px 0; }
+  .demo-title { font-size: 14px; font-weight: 600; color: #0c447c; margin-bottom: 4px; }
+  .demo-sub { font-size: 13px; color: #8a8578; margin-bottom: 16px; }
+  .takeaway { background: #eef4fb; border-left: 3px solid #185fa5; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 14.5px; margin: 18px 0; }
+  .takeaway b { color: #0c447c; }
+  .warn { background: #fcebeb; border-left: 3px solid #a32d2d; }
+  .warn b { color: #791f1f; }
+  button { font-family: inherit; font-size: 14px; padding: 6px 16px; border: 1px solid #b4b2a9; background: #fff; border-radius: 8px; cursor: pointer; transition: all .15s; }
+  button:hover { border-color: #185fa5; color: #185fa5; }
+  button.active { background: #e6f1fb; border-color: #185fa5; color: #0c447c; font-weight: 500; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0; }
+  input[type=range] { width: 100%; accent-color: #185fa5; }
+  .log { font-size: 13.5px; color: #55524b; background: #fff; border: 1px solid #e8e5de; border-radius: 8px; padding: 10px 14px; min-height: 40px; margin-top: 12px; }
+  .log p { margin: 2px 0; }
+  .grid4 { display: grid; grid-template-columns: 70px 1fr 132px 34px; gap: 4px 10px; font-size: 13px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; align-items: center; }
+  .bar { position: relative; height: 20px; background: #eceae4; border-radius: 4px; }
+  .bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+  .bar-cut { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #a32d2d; }
+  .ok { color: #3b6d11; } .bad { color: #a32d2d; }
+  .banner { margin-top: 14px; background: #eef4fb; border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+  .banner.good { background: #eaf3de; }
+  .banner.bad { background: #fcebeb; }
+  .bidder { display: inline-flex; flex-direction: column; border: 1px solid #d3d1c7; border-radius: 10px; padding: 8px 14px; margin: 4px 6px 4px 0; font-size: 13px; background: #fff; min-width: 108px; }
+  .bidder .name { font-weight: 600; font-size: 14px; }
+  .bidder .state { color: #3b6d11; font-size: 12.5px; }
+  .bidder.out { opacity: .55; }
+  .bidder.out .state { color: #a32d2d; }
+  .bidder.win { border-color: #3b6d11; background: #eaf3de; }
+  .runner { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid #d3d1c7; border-radius: 10px; padding: 10px 8px; width: 96px; background: #fff; font-size: 13px; transition: all .3s; }
+  .runner .no { font-size: 12px; color: #8a8578; }
+  .runner .res { font-size: 11.5px; color: #8a8578; margin-top: 4px; height: 30px; }
+  .runner.hl { border-color: #ba7517; background: #faeeda; }
+  .runner.err { border-color: #a32d2d; background: #fcebeb; }
+  .runner.fix { border-color: #185fa5; background: #e6f1fb; }
+  .price { font-size: 30px; font-weight: 600; font-family: ui-monospace, Menlo, monospace; }
+  .switch { min-width: 120px; }
+  .lamp { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: #b4b2a9; border: 1px solid #888780; vertical-align: middle; transition: background .2s; }
+  .lamp.on { background: #fac775; }
+  .toc { background: #f8f7f4; border: 1px solid #e8e5de; border-radius: 12px; padding: 18px 24px; margin: 28px 0; font-size: 14.5px; }
+  .toc a { color: #185fa5; text-decoration: none; }
+  .toc li { margin-bottom: 4px; }
+  table.terms { width: 100%; border-collapse: collapse; font-size: 14px; margin: 16px 0; }
+  table.terms th, table.terms td { border: 1px solid #e8e5de; padding: 8px 12px; text-align: left; }
+  table.terms th { background: #f8f7f4; font-weight: 600; }
+  .src { font-size: 13px; color: #8a8578; }
+  @media (max-width: 700px) { article { padding: 28px 20px 48px; } h1 { font-size: 26px; } .grid4 { grid-template-columns: 56px 1fr 100px 30px; font-size: 12px; } }
+</style>
+<style>
+  /* 嵌入 VitePress 文章时只展示互动组件，文章正文仍由 Markdown 管理。 */
+  body.embed-demo { background: transparent; }
+  body.embed-demo article {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  body.embed-demo article > *:not(.demo) { display: none !important; }
+  body.embed-demo article > .demo { display: none !important; }
+  body.embed-demo article > .demo:target,
+  body.embed-demo article > .demo.is-active {
+    display: block !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 20px 24px 22px !important;
+  }
+  @media (max-width: 700px) {
+    body.embed-demo article > .demo.is-active { padding: 16px 16px 18px !important; }
+  }
+</style>
+</head>
+<body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const embedParams = new URLSearchParams(window.location.search)
+    if (embedParams.get('embed') === '1') {
+      document.body.classList.add('embed-demo')
+      const demoId = (embedParams.get('demo') || '').replace(/\D/g, '')
+      if (demoId) {
+        document.getElementById('demo' + demoId)?.classList.add('is-active')
+      }
+    }
+  })
+</script>
+<article>
+
+<h1>机器为什么能学：神经网络 80 年发展史</h1>
+<p class="subtitle">从巴甫洛夫的狗，到 ChatGPT —— 一个想法熬了 80 年才改变世界</p>
+
+<img class="cover" src="/images/blog/neural-network-80-years/cover.png" alt="封面插画：从生物神经元到人工神经网络">
+<figcaption style="font-size:12.5px;color:#8a8578;text-align:center;margin-bottom:24px;">图：从生物大脑到人工神经网络的 80 年（本文配图均由 AI 生成）</figcaption>
+
+<div class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">机器凭什么能学习：不教规则，让它看例子</a></li>
+    <li><a href="#s2">感知机：第一个真能学习的机器（1957）</a></li>
+    <li><a href="#s3">一道数学题判了死刑：异或问题（1969）</a></li>
+    <li><a href="#s4">辛顿的救赎：多层网络 + 反向传播（1986）</a></li>
+    <li><a href="#s5">2012：三个条件第一次同时凑齐</a></li>
+    <li><a href="#s6">三个人卖了 4400 万美元</a></li>
+    <li><a href="#s7">三条启发</a></li>
+    <li><a href="#s8">一条时间线收尾</a></li>
+  </ol>
+</div>
+
+<p class="lede">神经网络的故事里有一个反复出现的模式：<strong>核心想法很早就有了，但每一次都卡在不同的地方。</strong>1949 年就有了"连接会变强"的学习理论，1957 年就有了会学习的机器，1986 年就有了训练多层网络的方法——可真正的爆发要等到 2012 年。缺的从来不是想法，而是数据、算力和把算法磨到能用的耐心。这篇文章把两讲课程串成一条完整的线，并为每个关键机制配了可以动手操作的演示。</p>
+
+<figure>
+  <img src="/images/blog/neural-network-80-years/timeline.svg" alt="神经网络八十年时间线">
+  <figcaption>图：全文脉络总览——1943 神经元模型 → 1957 感知机 → 1969 XOR 证明（此后 30 年寒冬）→ 1986 反向传播 → 2012 AlexNet → 2015 OpenAI → 2022 ChatGPT（第八节附详细时间表）</figcaption>
+</figure>
+
+<h2 id="s1">一、机器凭什么能学习：不教规则，让它看例子</h2>
+
+<h3>1.1 两次寒冬的教训</h3>
+<p>人工智能历史上出过两次大寒冬。第一次栽在<strong>机器翻译</strong>上：自然语言太复杂，当时的理论和技术基础完全撑不住。第二次栽在<strong>专家系统</strong>上：规则要人一条条手写，越写越多，系统越来越复杂，维护成本迅速失控。到 1980 年代末到 1990 年代初，AI 研究的资金一个接一个被砍，整个领域进入极其低迷的时期。</p>
+<p>注意，这两次失败其实是<strong>同一条路线</strong>的失败——用规则和逻辑构建智能的<strong>符号主义</strong>。1956 年达特茅斯会议提出的三条技术路线里，符号主义最先撞墙；而另一条路线——用神经元连接实现智能的<strong>连接主义</strong>——还没来得及充分发展。这个空档，就是后面整个故事的发生地。</p>
+
+<h3>1.2 连接主义：让机器自己学</h3>
+<p>连接主义的核心想法简单到一句话就能说完：<strong>不要教机器规则，让它看例子，自己学。</strong>就像小孩认猫——你不需要递给他一本规则手册，写上"猫有四条腿、尖耳朵、会喵喵叫"；你只需要带他看 100 只猫，他自己就学会了。人类学认字也是这样：爸妈不会告诉你"这个字有三横两竖所以读王"，他们只是一次又一次指着字告诉你读音，看得多了，大脑自己就记住了。</p>
+<p>这套思路的技术载体，就是<strong>神经网络</strong>。但它凭什么能实现"自己学"？答案不在工程里，在生物学里。</p>
+
+<h3>1.3 生物学的底子：赫布法则</h3>
+<p>1949 年，心理学家唐纳德·赫布提出一个后来影响了整个神经科学和人工智能的理论，一句话概括：<strong>一起被激活的神经元，会连在一起。</strong></p>
+<p>最著名的证据是巴甫洛夫的狗：喂食前先摇铃，次数多了，狗一听到铃声就流口水——哪怕眼前没有食物。赫布的解释是：一开始，"听到铃声"和"分泌唾液"是两件毫不相关的事，负责听觉的神经元和负责唾液分泌的神经元之间没有连接；但因为喂食前总是先摇铃，两个神经元一次又一次被<strong>同时</strong>激活，它们之间的连接就一点点变强。直到有一天，听觉神经元一被激活，就会自动带动唾液神经元。<strong>这个"连接可以变强"的现象叫突触可塑性，它是神经网络能记住东西、学会东西的全部理论基础。</strong>赫布也因此被认为是神经网络思想的重要奠基人之一。</p>
+<p>神经元本身的工作方式则像一个个<strong>小电站</strong>：接收电信号，够强就被激发（像灯泡亮一下），再把信号传给下一个神经元。有了赫布的理论，科学家们在 1950 年代开始认真思考一个问题：既然人脑是这样学习的，能不能造一台机器也用类似的方式学习？</p>
+
+<div class="demo" id="demo1">
+  <div class="demo-title">互动演示 1 · 巴甫洛夫的狗：连接是这样长出来的</div>
+  <div class="demo-sub">先点"配对训练"至少 3 次，再点"只摇铃（测试）"，看会发生什么。</div>
+  <svg viewBox="0 0 680 170" style="width:100%;max-width:640px;display:block;margin:0 auto;">
+    <line id="synapse" x1="205" y1="80" x2="475" y2="80" stroke="#888780" stroke-width="1" />
+    <text x="340" y="62" text-anchor="middle" font-size="12" fill="#8a8578">突触连接</text>
+    <circle id="nBell" cx="170" cy="80" r="30" fill="#e6f1fb" stroke="#185fa5" stroke-width="1" style="transition:fill .25s;" />
+    <text x="170" y="85" text-anchor="middle" font-size="13" font-weight="500" fill="#0c447c">听觉神经元</text>
+    <text x="170" y="132" text-anchor="middle" font-size="12" fill="#8a8578">（铃声）</text>
+    <circle id="nSaliva" cx="510" cy="80" r="30" fill="#e6f1fb" stroke="#185fa5" stroke-width="1" style="transition:fill .25s;" />
+    <text x="510" y="85" text-anchor="middle" font-size="13" font-weight="500" fill="#0c447c">唾液神经元</text>
+    <text x="510" y="132" text-anchor="middle" font-size="12" fill="#8a8578">（分泌唾液）</text>
+    <text x="340" y="112" text-anchor="middle" font-size="12" fill="#8a8578" id="synLabel">连接强度：无</text>
+  </svg>
+  <div class="controls">
+    <button id="pairBtn">配对训练（摇铃 + 喂食）</button>
+    <button id="testBtn">只摇铃（测试）</button>
+    <button id="resetBtn">重置</button>
+  </div>
+  <div class="log" id="dogLog"><p>赫布法则：一起被激活的神经元会连在一起。</p></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>"学习"在物理上就是连接强度的变化。铃声和食物本无关系，但因为总是同时出现，它们之间长出了连接——狗就"学会"了铃声意味着食物。机器要学东西，先得有可强可弱的连接。</div>
+
+<h2 id="s2">二、感知机：第一个真能学习的机器（1957）</h2>
+
+<p>1957 年，罗森布拉特发明了<strong>感知机</strong>——人类历史上第一个真正能学习的机器。他把它连接到相机上识别字母：一开始感知机什么都不认识，给它看 100 张 A 的照片、告诉它"这是 A"，再看 100 张 B 的照片、告诉它"这是 B"，慢慢地它就学会了：看到这种形状是 A，看到那种形状是 B。</p>
+<p>关键在于：它<strong>不是靠预设规则，而是靠看例子总结规律</strong>。这正是连接主义核心思想的第一次机器实现。</p>
+
+<h3>2.1 为什么必须同时给正例和反例</h3>
+<p>课程里有个很直观的思想实验：训练一个感知机识别三角形。你只给它看了 10 张三角形的图片，然后拿出来第 11 张——一个正方形。感知机会怎么判断？</p>
+<p>它会<strong>把正方形也判成三角形</strong>。因为它从没见过反例，它总结出的规律只是"有角、有边"——而正方形也有角、有边。所以机器学习必须同时提供<strong>正例</strong>（这是三角形）和<strong>反例</strong>（这不是三角形），它才能学会把两类区分开。</p>
+
+<div class="demo" id="demo2">
+  <div class="demo-title">互动演示 2 · 感知机学"三角形"：正例与反例</div>
+  <div class="demo-sub">选一种训练方式，喂给它若干例子，然后测试一张正方形。</div>
+  <div class="controls">
+    <button id="modeA" class="active">方式 A：只给正例</button>
+    <button id="modeB">方式 B：正例 + 反例</button>
+  </div>
+  <div class="controls">
+    <button id="feedPos">看一张三角形 ▲（正例）</button>
+    <button id="feedNeg">看一张正方形 ■（反例）</button>
+    <button id="runTest">测试：来一张正方形 ■</button>
+  </div>
+  <div class="log" id="pcLog"><p>当前方式：只给正例。已看正例 0 张，反例 0 张。</p></div>
+  <div class="banner" id="pcRule">感知机目前总结的规律：<b>有角、有边</b></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>没有反例，机器总结出的规律一定过宽。这和人类学习一模一样：只见过好人，就不知道坏人长什么样。</div>
+
+<h3>2.2 全世界的追捧，与一个人的转向</h3>
+<p>1958 年 7 月，《纽约时报》报道感知机"将能够像人类大脑一样思考"，美国海军投入大量资金，罗森布拉特一夜之间成为学术明星。他在演讲中反复强调自己的信念：如果让机器像大脑一样学习，未来它或许能识别人脸、理解语言，甚至下棋。在他看来，神经网络就是人工智能的未来。</p>
+<p>此时，一个关键人物登场了：<strong>明斯基</strong>。他是达特茅斯会议的发起人之一、AI 领域最有影响力的人物之一。有意思的是，他早期并不反对神经网络——1951 年还在读书时，他就设计过一台叫 Smart 的机器，能通过反馈改变行为，被认为是最早的学习型机器之一。但后来他逐渐转向了<strong>符号主义</strong>：他相信真正的智能应该建立在逻辑和规则之上，而不是依赖神经元式的连接。正是他，在 1969 年给神经网络判了死刑。</p>
+
+<h2 id="s3">三、一道数学题判了死刑：异或问题（1969）</h2>
+
+<h3>3.1 单层感知机是怎么做判断的</h3>
+<p>单层感知机本质上就是一台简单的计算器：<strong>给每个输入打个分，把分数加起来，总分够高，灯就亮；不够，灯就不亮。</strong>分数就是"权重"，够高的标准就是"阈值"。</p>
+<p>这个方法能解决很多问题。比如"两个开关都打开，灯才亮"（与）——两个分数加起来肯定比一个高，简单。再比如"只要有一个开关打开，灯就亮"（或）——只要有分就能过线，也简单。但有一种情况它解决不了：<strong>恰好一个开关打开，灯才亮</strong>——两个都关，不亮；两个都开，也不亮。这个规则叫<strong>异或（XOR）</strong>，你家里楼梯的双控开关就是它：两个开关位置不同，灯亮；位置相同，灯灭。</p>
+<p>为什么打分制搞不定异或？A 开的时候灯要亮，A 开就得给高分；B 开的时候灯也要亮，B 开也得给高分。可问题来了：A、B 都开时，两个高分加起来，分数更高了——按"分数越高越亮"的机制，它就该亮；但规则偏偏说，两个都开时灯不能亮。<strong>这个矛盾不是参数没调好，而是"打分累加 + 一条及格线"这个结构本身做不到。</strong></p>
+
+<div class="demo" id="demo3">
+  <div class="demo-title">互动演示 3 · 分数线困局：为什么单层无解</div>
+  <div class="demo-sub">四个状态的得分排名是锁死的：都开最高，都关最低。拖动"分数线"，看它永远亮不出"中间两个"。</div>
+  <div class="controls">
+    <button id="xorBtn" class="active">异或 XOR</button>
+    <button id="orBtn">或 OR</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;margin:8px 0;">
+    <span style="font-size:13px;flex:none;">分数线 θ</span>
+    <input id="thetaSlider" type="range" min="-0.5" max="2.5" step="0.1" value="0.5" style="flex:1;">
+    <span id="thetaVal" style="font-family:ui-monospace,Menlo,monospace;font-size:13px;flex:none;width:36px;text-align:right;">0.5</span>
+  </div>
+  <div class="grid4" id="scoreRows"></div>
+  <div class="banner" id="scoreMsg"></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>单层感知机的亮区永远是"从最高分往下连续的一截"，而异或要的是"跳过最高分、点亮中间两个"——这不是排名上连续的一段。一条分数线，两头夹不住中间。1969 年，明斯基和帕普特在《感知机》一书中用数学严格证明了这件事：<b>单层感知机在数学上无解</b>。</div>
+
+<h3>3.2 寒冬，以及一个悲伤的注脚</h3>
+<p>证明发表后，神经网络路线迅速失去学术界的主流地位，研究经费被削减，关注度也随之下降。1971 年 7 月 11 日——罗森布拉特 43 岁生日那天——他一个人去切萨皮克湾划船，几个小时后，人们发现他淹死在水里。官方说法是意外溺水；因为在那之前他一直处于抑郁状态，也有人猜测是自杀。此后，神经网络研究进入了长达 30 年的寒冬，整个学术界都认为这条路真的走不通了。</p>
+
+<figure>
+  <img src="/images/blog/neural-network-80-years/winter.png" alt="神经网络寒冬插画">
+  <figcaption>图：三十年寒冬——方向明明是对的，但没有人知道怎么继续走下去（AI 生成）</figcaption>
+</figure>
+
+<div class="takeaway warn"><b>但火种留下了：</b>明斯基和帕普特否定的只是<b>单层</b>感知机。他们在书里也承认，如果不止一层、把多个感知机组合起来，能力可能完全不同——只是当时没有人知道怎么训练多层网络。这个"只是没人知道"，一等就是 17 年。</div>
+
+<h2 id="s4">四、辛顿的救赎：多层网络 + 反向传播（1986）</h2>
+
+<h3>4.1 多层为什么强</h3>
+<p>多层神经网络把一次判断拆成多个步骤。比如识别一个苹果：第一层分别关注颜色、形状、大小，第二层再把这些特征综合起来判断。层数越深，能理解的规律就越复杂——<strong>"深度学习"的"深度"，字面意思就是层数多</strong>。</p>
+
+<figure>
+  <svg viewBox="0 0 680 250" style="width:100%;display:block;">
+    <text x="170" y="24" text-anchor="middle" font-size="13" font-weight="500" fill="#5f5e5a">单层：所有特征混在一次打分里</text>
+    <rect x="40" y="40" width="44" height="30" rx="6" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="62" y="60" text-anchor="middle" font-size="12" fill="#0c447c">颜色</text>
+    <rect x="40" y="84" width="44" height="30" rx="6" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="62" y="104" text-anchor="middle" font-size="12" fill="#0c447c">形状</text>
+    <rect x="40" y="128" width="44" height="30" rx="6" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="62" y="148" text-anchor="middle" font-size="12" fill="#0c447c">大小</text>
+    <line x1="84" y1="55" x2="200" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <line x1="84" y1="99" x2="200" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <line x1="84" y1="143" x2="200" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <rect x="200" y="66" width="60" height="48" rx="8" fill="#faeeda" stroke="#ba7517" stroke-width="0.5"/>
+    <text x="230" y="95" text-anchor="middle" font-size="12" fill="#854f0b">打分累加</text>
+    <line x1="260" y1="90" x2="300" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <rect x="300" y="70" width="46" height="40" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="323" y="94" text-anchor="middle" font-size="12" fill="#0c447c">是苹果?</text>
+
+    <text x="510" y="24" text-anchor="middle" font-size="13" font-weight="500" fill="#5f5e5a">多层：判断拆成多步加工</text>
+    <rect x="380" y="40" width="44" height="30" rx="6" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="402" y="60" text-anchor="middle" font-size="12" fill="#0c447c">颜色</text>
+    <rect x="380" y="84" width="44" height="30" rx="6" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="402" y="104" text-anchor="middle" font-size="12" fill="#0c447c">形状</text>
+    <rect x="380" y="128" width="44" height="30" rx="6" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="402" y="148" text-anchor="middle" font-size="12" fill="#0c447c">大小</text>
+    <line x1="424" y1="55" x2="500" y2="66" stroke="#b4b2a9" stroke-width="1"/>
+    <line x1="424" y1="99" x2="500" y2="94" stroke="#b4b2a9" stroke-width="1"/>
+    <line x1="424" y1="143" x2="500" y2="122" stroke="#b4b2a9" stroke-width="1"/>
+    <circle cx="500" cy="66" r="14" fill="#eaf3de" stroke="#3b6d11" stroke-width="0.5"/>
+    <circle cx="500" cy="94" r="14" fill="#eaf3de" stroke="#3b6d11" stroke-width="0.5"/>
+    <circle cx="500" cy="122" r="14" fill="#eaf3de" stroke="#3b6d11" stroke-width="0.5"/>
+    <text x="516" y="60" font-size="11" fill="#3b6d11">红?</text>
+    <text x="516" y="102" font-size="11" fill="#3b6d11">圆?</text>
+    <text x="516" y="130" font-size="11" fill="#3b6d11">拳头大?</text>
+    <line x1="514" y1="66" x2="590" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <line x1="514" y1="94" x2="590" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <line x1="514" y1="122" x2="590" y2="90" stroke="#b4b2a9" stroke-width="1"/>
+    <rect x="590" y="70" width="46" height="40" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="613" y="94" text-anchor="middle" font-size="12" fill="#0c447c">是苹果?</text>
+    <text x="340" y="180" text-anchor="middle" font-size="12" fill="#8a8578">多层 = 每一层多"切一刀"、多加工一层特征，能力的组合空间指数级扩大</text>
+    <text x="340" y="210" text-anchor="middle" font-size="12" fill="#8a8578">这正是 1969 年明斯基留下的活口：单层画不了两条线，两层可以</text>
+  </svg>
+  <figcaption>图：单层与多层网络的判断方式对比</figcaption>
+</figure>
+
+<p>用上一讲的异或问题来看：单层只能在图上画一条直线，而异或的两类点呈对角交叉，一条直线分不开；多层网络相当于允许先画两条线、再把它们组合起来。下面这个演示里，"或"神经元画一条线（切掉都关），"非与"神经元画另一条线（切掉都开），输出层把两条线的结果组合起来——异或规则就出来了。</p>
+
+<div class="demo" id="demo4">
+  <div class="demo-title">互动演示 4 · 两层网络如何解决异或</div>
+  <div class="demo-sub">点开关，看两个"中间帮手"各画一条线，输出层再把它们组合。</div>
+  <div class="controls">
+    <button id="swA2" class="switch">开关 A：关</button>
+    <button id="swB2" class="switch">开关 B：关</button>
+    <span style="font-size:14px;">输出灯：<span id="lamp2" class="lamp"></span> <span id="lampTxt2">灭</span></span>
+  </div>
+  <svg viewBox="0 0 680 190" style="width:100%;max-width:640px;display:block;margin:0 auto;">
+    <line id="lA1" x1="105" y1="45" x2="295" y2="45" stroke="#b4b2a9" stroke-width="1"/>
+    <line id="lB1" x1="105" y1="145" x2="295" y2="45" stroke="#b4b2a9" stroke-width="1"/>
+    <line id="lA2" x1="105" y1="45" x2="295" y2="145" stroke="#b4b2a9" stroke-width="1"/>
+    <line id="lB2" x1="105" y1="145" x2="295" y2="145" stroke="#b4b2a9" stroke-width="1"/>
+    <circle id="inA" cx="80" cy="45" r="24" fill="#e6f1fb" stroke="#185fa5" stroke-width="1"/>
+    <text x="80" y="49" text-anchor="middle" font-size="12" font-weight="500" fill="#0c447c">开关A</text>
+    <circle id="inB" cx="80" cy="145" r="24" fill="#e6f1fb" stroke="#185fa5" stroke-width="1"/>
+    <text x="80" y="149" text-anchor="middle" font-size="12" font-weight="500" fill="#0c447c">开关B</text>
+    <circle id="h1" cx="330" cy="45" r="24" fill="#e6f1fb" stroke="#185fa5" stroke-width="1"/>
+    <text x="330" y="49" text-anchor="middle" font-size="12" font-weight="500" fill="#0c447c">h1 或</text>
+    <text x="330" y="86" text-anchor="middle" font-size="11" fill="#8a8578" id="h1Score">0.0 &lt; 1</text>
+    <circle id="h2" cx="330" cy="145" r="24" fill="#e6f1fb" stroke="#185fa5" stroke-width="1"/>
+    <text x="330" y="149" text-anchor="middle" font-size="12" font-weight="500" fill="#0c447c">h2 非与</text>
+    <text x="330" y="186" text-anchor="middle" font-size="11" fill="#8a8578" id="h2Score">2.0 ≥ 1</text>
+    <line id="lO1" x1="354" y1="45" x2="505" y2="95" stroke="#b4b2a9" stroke-width="1"/>
+    <line id="lO2" x1="354" y1="145" x2="505" y2="95" stroke="#b4b2a9" stroke-width="1"/>
+    <circle id="outN" cx="530" cy="95" r="24" fill="#e6f1fb" stroke="#185fa5" stroke-width="1"/>
+    <text x="530" y="99" text-anchor="middle" font-size="12" font-weight="500" fill="#0c447c">输出</text>
+    <text x="530" y="136" text-anchor="middle" font-size="11" fill="#8a8578" id="outScore">0.0 &lt; 2</text>
+    <circle id="lampN" cx="620" cy="95" r="20" fill="#b4b2a9" stroke="#888780" stroke-width="1" style="transition:fill .2s;"/>
+    <text x="620" y="140" text-anchor="middle" font-size="11" fill="#8a8578">灯</text>
+  </svg>
+  <div class="banner" id="xorCheck"></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>h1 画一条线（"至少开一个"），h2 画另一条线（"没有全开"），输出层要求两条线的结论同时成立——剩下的正好是"恰好一个开"。层数每多一层，就多一次"切一刀再组合"的机会。</div>
+
+<h3>4.2 反向传播：接力赛的责任倒推</h3>
+<p>多层网络的"能力"有了，但训练问题没解决：网络输出错了，错该怎么分摊到每一层、每个参数上？1986 年，辛顿与 David Rumelhart、Ronald Williams 在《自然》发表论文，系统提出了<strong>反向传播</strong>算法。</p>
+<p>它的核心逻辑用一场接力赛就能说清：接力赛输了，你不能只说"最后一名慢"，而要从最后一棒开始<strong>倒推</strong>每一棒的责任——第四棒接棒时落后了多少、第三棒交棒时状态如何……算清每棒责任，再各自针对性调整。反向传播就是从最终输出的错误开始，一步一步往前追溯每一层的责任，再有针对性地调整参数。</p>
+
+<div class="demo" id="demo5">
+  <div class="demo-title">互动演示 5 · 接力赛：误差怎么一层层倒推</div>
+  <div class="demo-sub">点"播放"：先正向跑完四棒，然后在终点产生错误，再把错误和责任一级级倒推回第一棒。</div>
+  <div class="controls">
+    <span class="runner" id="r1"><span class="no">第 1 棒</span>🥖<span class="res" id="res1"></span></span>
+    <span style="align-self:center;color:#8a8578;">→</span>
+    <span class="runner" id="r2"><span class="no">第 2 棒</span>🥖<span class="res" id="res2"></span></span>
+    <span style="align-self:center;color:#8a8578;">→</span>
+    <span class="runner" id="r3"><span class="no">第 3 棒</span>🥖<span class="res" id="res3"></span></span>
+    <span style="align-self:center;color:#8a8578;">→</span>
+    <span class="runner" id="r4"><span class="no">第 4 棒</span>🥖<span class="res" id="res4"></span></span>
+  </div>
+  <div class="controls">
+    <button id="playRelay">播放</button>
+    <button id="resetRelay">重置</button>
+  </div>
+  <div class="log" id="relayLog"><p>等待播放……</p></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>每层的参数调整不是凭感觉，而是从最终错误倒推出来的"责任占比"。这就是 1986 年之后多层网络变得"可训练"的关键。</div>
+
+<h3>4.3 理论可行 ≠ 跑得起来</h3>
+<p>但 1986 年之后，神经网络<strong>依然是冷门方向</strong>。反向传播让多层网络"理论上可训练"，可要真跑起来，需要三样东西：<strong>海量数据、强大算力、成熟的算法</strong>。当时三样全缺——没有足够大的标注数据集，没有足够快的计算机，算法本身也还有许多工程问题没解决。辛顿在冷板凳上守了 30 年，常年申请不到研究经费。改变世界的发现，一开始多半就是这个处境。</p>
+
+<h2 id="s5">五、2012：三个条件第一次同时凑齐</h2>
+
+<p>2012 年 9 月，辛顿团队提交的 AlexNet 参加 ImageNet 图像识别挑战赛，把 top5 错误率从 2011 年的 26% 左右降到 15% 左右——而此前这个指标每年只进步 1–2 个百分点。一次拉开 10 个点以上，被公认为<strong>深度学习时代正式开启的标志</strong>。这不是某一个天才念头，而是三个条件第一次同时成熟：</p>
+<ul>
+  <li><strong>数据</strong>：2009 年，李飞飞带领团队建成 ImageNet 数据库——1400 万张标注图片、2 万多个类别（比赛用其中约 120 万张、1000 个类别训练）。</li>
+  <li><strong>算力</strong>：AlexNet 使用 2 块英伟达 GTX 580 GPU（每块 3GB 显存），把训练时间从传统 CPU 的几个月缩短到 5–6 天。GPU 本是为游戏画面设计的，天生适合"大量简单计算并行"——而这正是神经网络训练的计算形态。</li>
+  <li><strong>算法</strong>：辛顿团队 20 多年的持续改进——权重初始化、防止过拟合、训练加速，一点点磨出来的。</li>
+</ul>
+
+<div class="demo" id="demo6">
+  <div class="demo-title">互动演示 6 · 三个条件凑齐，才会"点火"</div>
+  <div class="demo-sub">拖动三个滑块。任何一项不及格，结果都停滞在"每年进步 1–2 个点"的旧世界。</div>
+  <div style="margin:10px 0;">
+    <div style="font-size:13px;margin-bottom:2px;">数据（ImageNet 类数据库）<span id="dVal" style="float:right;font-family:ui-monospace,Menlo,monospace;">0</span></div>
+    <input id="dSlider" type="range" min="0" max="100" value="10">
+    <div style="font-size:13px;margin:8px 0 2px;">算力（GPU 并行）<span id="cVal" style="float:right;font-family:ui-monospace,Menlo,monospace;">0</span></div>
+    <input id="cSlider" type="range" min="0" max="100" value="10">
+    <div style="font-size:13px;margin:8px 0 2px;">算法（20 年打磨）<span id="aVal" style="float:right;font-family:ui-monospace,Menlo,monospace;">0</span></div>
+    <input id="aSlider" type="range" min="0" max="100" value="10">
+  </div>
+  <div class="banner" id="condMsg"></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>数据、算力、算法就像做饭的食材、火、菜谱——缺一样都做不出菜。这对做 AI 落地最实用：<b>别指望单点突破</b>。</div>
+
+<figure>
+  <img src="/images/blog/neural-network-80-years/dawn.png" alt="深度学习爆发插画">
+  <figcaption>图：2012，食材、火、菜谱第一次同时就位（AI 生成）</figcaption>
+</figure>
+
+<h2 id="s6">六、三个人卖了 4400 万美元</h2>
+
+<p>AlexNet 夺冠后，辛顿和两个学生——Alex Krizhevsky、Ilya Sutskever——成立了一家只有 3 个人的公司：<strong>DNN Research</strong>。没有产品、没有办公室、没有任何有形资产。但谷歌、微软、百度、DeepMind 四家巨头闻讯而来，展开竞拍。</p>
+<p>真实竞拍通过邮件出价，四方彼此不知道对手是谁；起拍价 1200 万美元，每轮加价至少 100 万美元。DeepMind 在 1500 万美元时退出——作为初创公司，他们只能用股票期权出价，拼不过巨头的现金；微软在 2200 万美元时退出；剩下百度和谷歌一路顶到 4400 万美元（约合 2.88 亿人民币）。出价时辛顿严重背痛，是<strong>躺在地板上</strong>看着电脑屏幕完成的。</p>
+
+<div class="demo" id="demo7">
+  <div class="demo-title">互动演示 7 · 4400 万美元竞拍模拟</div>
+  <div class="demo-sub">点"加价 100 万"，看四家怎么一家家退出。</div>
+  <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px;">
+    <span class="price" id="priceTag">$1200万</span>
+    <span style="font-size:13px;color:#8a8578;">起拍价 $1200 万 · 每轮至少加价 $100 万</span>
+  </div>
+  <div id="bidders">
+    <span class="bidder" id="bd-deepmind"><span class="name">DeepMind</span><span class="state">竞拍中</span></span>
+    <span class="bidder" id="bd-microsoft"><span class="name">微软</span><span class="state">竞拍中</span></span>
+    <span class="bidder" id="bd-baidu"><span class="name">百度</span><span class="state">竞拍中</span></span>
+    <span class="bidder" id="bd-google"><span class="name">谷歌</span><span class="state">竞拍中</span></span>
+  </div>
+  <div class="controls">
+    <button id="bidBtn">加价 100 万</button>
+    <button id="autoBid">自动出价</button>
+    <button id="resetBid">重置</button>
+  </div>
+  <div class="log" id="bidLog"><p>竞拍开始。四位买家彼此不知道对手身份。</p></div>
+  <div class="banner" id="bidResult" style="display:none;"></div>
+</div>
+<div class="takeaway"><b>说明了什么：</b>谷歌买的不是产品——这家公司什么都没有。4400 万美元约等于 150 个资深工程师的年薪（每人年薪 20–30 万美元），谷歌买的是<b>3 颗知道怎么教神经网络学习的大脑</b>。谷歌看到的不是成本，而是未来。</div>
+
+<p>故事还没结束。辛顿 2018 年获得图灵奖，2024 年与约翰·霍普菲尔德共同获得诺贝尔物理学奖。Ilya Sutskever 在 2015 年底离开谷歌，与 Sam Altman 共同创立 OpenAI，担任首席科学家领导大语言模型的研发——这些模型最终变成了 ChatGPT。辛顿培养学生的方式也很特别：不指定学生的研究方向，而是和学生一起探索可能性。</p>
+
+<h2 id="s7">七、三条启发</h2>
+<ol>
+  <li><strong>科学突破需要长期坚守。</strong>辛顿守了 30 年冷板凳。那些改变世界的发现，一开始多半不被看好。</li>
+  <li><strong>技术突破需要多个条件同时成熟。</strong>数据、算力、算法，缺一不可——就像食材、火、菜谱，缺一样都做不出好菜。做 AI 落地时尤其如此：别指望单点突破。</li>
+  <li><strong>人才是最宝贵的资源。</strong>4400 万美元买的是 3 个人的大脑。在 AI 时代，掌握核心技术的人就是未来。</li>
+</ol>
+
+<h2 id="s8">八、一条时间线收尾</h2>
+
+<figure>
+  <svg viewBox="0 0 680 330" style="width:100%;display:block;">
+    <title>神经网络八十年时间线</title>
+    <text x="45" y="44" font-size="14" font-weight="500" fill="#26215c">神经网络八十年：能学、失败、复活、爆发</text>
+    <rect x="245.4" y="60" width="288" height="250" fill="#fcebeb"/>
+    <text x="389" y="72" text-anchor="middle" font-size="12" fill="#791f1f">神经网络寒冬 1969→2012</text>
+    <text x="450" y="176" text-anchor="middle" font-size="12" fill="#791f1f">缺数据 · 算力 · 算法</text>
+    <line x1="45" y1="190" x2="630" y2="190" stroke="#5f5e5a" stroke-width="1.5"/>
+    <line x1="86" y1="124" x2="74.8" y2="190" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="40" y="76" width="92" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="86" y="92" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">1943</text>
+    <text x="86" y="109" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">神经元模型</text></g>
+    <line x1="109.8" y1="190" x2="109.8" y2="208" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="70.8" y="208" width="78" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="109.8" y="224" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">1949</text>
+    <text x="109.8" y="241" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">赫布法则</text></g>
+    <line x1="164.4" y1="172" x2="164.4" y2="190" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="118.4" y="124" width="92" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="164.4" y="140" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">1957</text>
+    <text x="164.4" y="157" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">感知机诞生</text></g>
+    <line x1="245.4" y1="190" x2="245.4" y2="256" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="205.4" y="256" width="80" height="48" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="0.5"/>
+    <text x="245.4" y="272" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#a32d2d">1969</text>
+    <text x="245.4" y="289" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#791f1f">XOR 证明</text></g>
+    <line x1="361.2" y1="124" x2="361.2" y2="190" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="322.2" y="76" width="78" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="361.2" y="92" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">1986</text>
+    <text x="361.2" y="109" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">反向传播</text></g>
+    <line x1="533.4" y1="190" x2="533.4" y2="208" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="478.4" y="208" width="110" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="533.4" y="224" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">2012</text>
+    <text x="533.4" y="241" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">AlexNet 爆发</text></g>
+    <line x1="553.2" y1="172" x2="553.2" y2="190" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="502.2" y="124" width="102" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="553.2" y="140" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">2015</text>
+    <text x="553.2" y="157" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">OpenAI 创立</text></g>
+    <line x1="599.4" y1="190" x2="599.4" y2="256" stroke="#b4b2a9" stroke-width="1"/>
+    <g><rect x="560.4" y="256" width="78" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.5"/>
+    <text x="599.4" y="272" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185fa5">2022</text>
+    <text x="599.4" y="289" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0c447c">ChatGPT</text></g>
+  </svg>
+  <figcaption>图：1943 神经元模型 → 1957 感知机 → 1969 XOR 证明 → 1986 反向传播 → 2012 AlexNet → 2015 OpenAI → 2022 ChatGPT</figcaption>
+</figure>
+
+<p>一句话收尾：这条线的逻辑是<strong>想法早就有了（1943/1949）→ 能力被证明不够（1969）→ 补上方法（1986）→ 等齐工具（2012）→ 复利兑现（2015/2022）</strong>。下一讲，我们聊 AI 的三种学习方式——监督学习、无监督学习、强化学习，看"例子"到底有几种给法。</p>
+
+</article>
+
+<script>
+(function(){
+  function log(id, msg){ var el=document.getElementById(id); var p=document.createElement('p'); p.innerHTML=msg; el.appendChild(p); el.scrollTop=el.scrollHeight; }
+  function flash(id, color, orig){ var el=document.getElementById(id); el.setAttribute('fill', color); setTimeout(function(){ el.setAttribute('fill', orig); }, 350); }
+
+  var pairCount=0, BLUE='#e6f1fb', AMBER='#fac775', GRAY='#b4b2a9', DARK='#185fa5';
+  document.getElementById('pairBtn').addEventListener('click', function(){
+    pairCount++;
+    flash('nBell', AMBER, BLUE); setTimeout(function(){ flash('nSaliva', AMBER, BLUE); }, 250);
+    var w = 1 + 2.2*Math.min(pairCount,3);
+    document.getElementById('synapse').setAttribute('stroke-width', w);
+    document.getElementById('synapse').setAttribute('stroke', pairCount>=3 ? '#ba7517' : '#888780');
+    document.getElementById('synLabel').textContent = '连接强度：' + (pairCount>=3 ? '强（已形成）' : '弱（第'+pairCount+'次配对）');
+    log('dogLog', '第 '+pairCount+' 次配对：铃声与食物同时出现，连接变强……');
+  });
+  document.getElementById('testBtn').addEventListener('click', function(){
+    if(pairCount>=3){
+      flash('nBell', AMBER, BLUE); setTimeout(function(){ flash('nSaliva', AMBER, BLUE); }, 300);
+      log('dogLog', '<b>测试：只摇铃，没有食物——唾液神经元也被激发了！</b>连接已经形成，这就是"学会"。');
+    } else {
+      log('dogLog', '还没学会：配对次数不够（当前 '+pairCount+' 次，至少 3 次）。');
+    }
+  });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    pairCount=0;
+    document.getElementById('synapse').setAttribute('stroke-width', 1);
+    document.getElementById('synapse').setAttribute('stroke', '#888780');
+    document.getElementById('synLabel').textContent = '连接强度：无';
+    document.getElementById('dogLog').innerHTML = '<p>赫布法则：一起被激活的神经元会连在一起。</p>';
+  });
+
+  var mode='A', posN=0, negN=0;
+  function refreshPC(){
+    document.getElementById('modeA').className = mode==='A' ? 'active' : '';
+    document.getElementById('modeB').className = mode==='B' ? 'active' : '';
+    var rule = mode==='A' ? '有角、有边' : '有且只有 3 条边、3 个角';
+    document.getElementById('pcRule').innerHTML = '感知机目前总结的规律：<b>'+rule+'</b>（训练中：正例 '+posN+' 张，反例 '+negN+' 张）';
+  }
+  document.getElementById('modeA').addEventListener('click', function(){ mode='A'; refreshPC(); });
+  document.getElementById('modeB').addEventListener('click', function(){ mode='B'; refreshPC(); });
+  document.getElementById('feedPos').addEventListener('click', function(){ posN++; log('pcLog', '喂入正例：三角形 ▲（第 '+posN+' 张）'); refreshPC(); });
+  document.getElementById('feedNeg').addEventListener('click', function(){ if(mode==='A'){ log('pcLog', '方式 A 下没有反例可喂——它只见过三角形。'); return; } negN++; log('pcLog', '喂入反例：正方形 ■（这不是三角形，第 '+negN+' 张）'); refreshPC(); });
+  document.getElementById('runTest').addEventListener('click', function(){
+    if(mode==='A'){
+      if(posN===0){ log('pcLog', '还没训练过，先喂几张正例。'); return; }
+      log('pcLog', '测试：正方形 ■ → 感知机判定：<b class="bad">三角形 ✗</b>（正方形也有角有边，它没学过反例）');
+    } else {
+      if(posN===0 || negN===0){ log('pcLog', '方式 B 需要正例和反例都至少喂 1 张。'); return; }
+      log('pcLog', '测试：正方形 ■ → 感知机判定：<b class="ok">不是三角形 ✓</b>（反例让它学会了区分）');
+    }
+  });
+
+  var prob='xor';
+  var cases=[{n:'都开',A:1,B:1,r:0},{n:'只开A',A:1,B:0,r:1},{n:'只开B',A:0,B:1,r:1},{n:'都关',A:0,B:0,r:0}];
+  function pct(s){ return ((s+0.5)/3*100).toFixed(1)+'%'; }
+  function renderScore(){
+    var th=parseFloat(document.getElementById('thetaSlider').value);
+    document.getElementById('thetaVal').textContent=th.toFixed(1);
+    document.getElementById('xorBtn').className = prob==='xor'?'active':'';
+    document.getElementById('orBtn').className = prob==='or'?'active':'';
+    var html='', bright=0;
+    cases.forEach(function(c){
+      var sc=c.A+c.B, on=sc>th, ok=(on?1:0)===c.r;
+      if(on) bright++;
+      html+='<div>'+c.n+'</div><div>'+sc.toFixed(1)+(on?' > ':' ≤ ')+th.toFixed(1)+'</div><div>要求'+(c.r?'亮':'灭')+'，实际'+(on?'亮':'灭')+'</div><div class="'+(ok?'ok':'bad')+'">'+(ok?'对':'错')+'</div>';
+    });
+    document.getElementById('scoreRows').innerHTML=html;
+    var m;
+    if(prob==='or'){ m = bright===3 ? '成功：4/4 全对。OR 要亮的恰好是"从最高分往下连续的一截"，一条分数线就够。' : 'OR 一定存在全对的直线，继续调：要亮的是除"都关"以外的三个。'; }
+    else { m = bright>=1 ? '要保住中间两个"只开"，分数线就得低到把"都开"也一起捞进来——两头夹中间，一条线两头顾不上。' : '分数线太高：全灭。异或要求中间两个亮。'; }
+    var b=document.getElementById('scoreMsg');
+    b.textContent=m; b.className='banner'+(prob==='or'&&bright===3?' good':'');
+  }
+  document.getElementById('thetaSlider').addEventListener('input', renderScore);
+  document.getElementById('xorBtn').addEventListener('click', function(){ prob='xor'; renderScore(); });
+  document.getElementById('orBtn').addEventListener('click', function(){ prob='or'; renderScore(); });
+  renderScore();
+
+  var A=0, B=0;
+  function renderNet(){
+    document.getElementById('swA2').textContent='开关 A：'+(A?'开':'关');
+    document.getElementById('swB2').textContent='开关 B：'+(B?'开':'关');
+    var h1=A||B, h2=(A&&B)?0:1, out=h1&&h2;
+    var set=function(id, on){ document.getElementById(id).setAttribute('fill', on?AMBER:BLUE); };
+    set('inA', A); set('inB', B); set('h1', h1); set('h2', h2); set('outN', out);
+    var links=[['lA1',A&&h1],['lB1',B&&h1],['lA2',A&&!h2],['lB2',B&&!h2],['lO1',h1&&out],['lO2',h2&&out]];
+    links.forEach(function(l){ document.getElementById(l[0]).setAttribute('stroke', l[1]?'#ba7517':'#b4b2a9'); });
+    document.getElementById('h1Score').textContent=(A+B).toFixed(1)+(h1?' ≥ 1 亮':' < 1 灭');
+    document.getElementById('h2Score').textContent=(2-A-B).toFixed(1)+(h2?' ≥ 1 亮':' < 1 灭');
+    document.getElementById('outScore').textContent=(h1+h2).toFixed(1)+(out?' ≥ 2 亮':' < 2 灭');
+    document.getElementById('lampN').setAttribute('fill', out?AMBER:GRAY);
+    document.getElementById('lamp2').className='lamp'+(out?' on':'');
+    document.getElementById('lampTxt2').textContent=out?'亮':'灭';
+    var req = (A!==B);
+    document.getElementById('xorCheck').innerHTML = (out===req)
+      ? '灯'+(out?'亮':'灭')+' —— 正好符合异或规则（"位置不同才亮"）<b class="ok">✓</b>'
+      : '与异或规则不符';
+    document.getElementById('xorCheck').className='banner'+(out===req?' good':' bad');
+  }
+  document.getElementById('swA2').addEventListener('click', function(){ A=1-A; renderNet(); });
+  document.getElementById('swB2').addEventListener('click', function(){ B=1-B; renderNet(); });
+  renderNet();
+
+  var relaySteps=[
+    {t:'第 1 棒起跑，交棒', hl:['r1']},
+    {t:'第 2 棒接棒奔跑', hl:['r2']},
+    {t:'第 3 棒接棒奔跑', hl:['r3']},
+    {t:'第 4 棒接棒冲刺', hl:['r4']},
+    {t:'冲刺结束——成绩不理想，产生<b>最终错误</b>', hl:['r4'], err:['r4']},
+    {t:'倒推：第 4 棒责任最大（接棒时已无力回天）', hl:['r4'], res:['res4','责任 40%']},
+    {t:'倒推：第 3 棒交棒时节奏偏慢', hl:['r3'], res:['res3','责任 30%']},
+    {t:'倒推：第 2 棒传接有损耗', hl:['r2'], res:['res2','责任 20%']},
+    {t:'倒推：第 1 棒起跑节奏决定了全局', hl:['r1'], res:['res1','责任 10%']},
+    {t:'针对性调整：每一棒各自改进参数，重新开跑', hl:['r1','r2','r3','r4'], fix:['r1','r2','r3','r4']}
+  ];
+  var relayTimer=null, relayIdx=0;
+  function clearRunners(){ ['r1','r2','r3','r4'].forEach(function(r){ var el=document.getElementById(r); el.className='runner'; }); for(var i=1;i<=4;i++){ document.getElementById('res'+i).textContent=''; } }
+  function relayStep(){
+    clearRunners();
+    var s=relaySteps[relayIdx];
+    (s.hl||[]).forEach(function(r){ document.getElementById(r).className='runner hl'; });
+    (s.err||[]).forEach(function(r){ document.getElementById(r).className='runner err'; });
+    (s.fix||[]).forEach(function(r){ document.getElementById(r).className='runner fix'; });
+    if(s.res){ document.getElementById(s.res[0]).textContent=s.res[1]; }
+    log('relayLog', s.t);
+    relayIdx++;
+    if(relayIdx>=relaySteps.length){ clearInterval(relayTimer); relayTimer=null; }
+  }
+  document.getElementById('playRelay').addEventListener('click', function(){
+    if(relayTimer) return;
+    relayIdx=0; document.getElementById('relayLog').innerHTML=''; relayStep();
+    relayTimer=setInterval(relayStep, 1100);
+  });
+  document.getElementById('resetRelay').addEventListener('click', function(){
+    if(relayTimer){ clearInterval(relayTimer); relayTimer=null; }
+    clearRunners(); relayIdx=0; document.getElementById('relayLog').innerHTML='<p>等待播放……</p>';
+  });
+
+  function renderCond(){
+    var d=+document.getElementById('dSlider').value, c=+document.getElementById('cSlider').value, a=+document.getElementById('aSlider').value;
+    document.getElementById('dVal').textContent=d;
+    document.getElementById('cVal').textContent=c;
+    document.getElementById('aVal').textContent=a;
+    var b=document.getElementById('condMsg');
+    if(d>=60 && c>=60 && a>=60){
+      b.className='banner good';
+      b.innerHTML='<b>2012 年：三条件齐了！</b>AlexNet 把 ImageNet top5 错误率从约 26% 砍到约 15%——此前每年只进步 1–2 个百分点，一次拉开 10 个点以上，深度学习时代开启。';
+    } else {
+      var miss=[];
+      if(d<60) miss.push('数据'); if(c<60) miss.push('算力'); if(a<60) miss.push('算法');
+      b.className='banner bad';
+      b.innerHTML='缺：<b>'+miss.join('、')+'</b>。理论再对也跑不起来——神经网络仍是冷门方向，错误率停留在 26% 附近，每年只进步 1–2 个点。';
+    }
+  }
+  ['dSlider','cSlider','aSlider'].forEach(function(id){ document.getElementById(id).addEventListener('input', renderCond); });
+  renderCond();
+
+  var price=1200, bidTimer=null;
+  var exits=[{id:'bd-deepmind', at:1500, why:'DeepMind 退出：只能用股票期权出价，拼不过现金'},
+             {id:'bd-microsoft', at:2200, why:'微软退出'}];
+  function renderBid(){
+    document.getElementById('priceTag').textContent='$'+price+'万';
+  }
+  function doBid(){
+    if(price>=4400) return;
+    price+=100;
+    renderBid();
+    exits.forEach(function(e){
+      var el=document.getElementById(e.id);
+      if(price>=e.at && !el.classList.contains('out')){
+        el.classList.add('out');
+        el.querySelector('.state').textContent='已退出';
+        log('bidLog', e.why);
+      }
+    });
+    if(price>=4400){
+      document.getElementById('bd-google').classList.add('win');
+      document.getElementById('bd-google').querySelector('.state').textContent='胜出';
+      document.getElementById('bd-baidu').classList.add('out');
+      document.getElementById('bd-baidu').querySelector('.state').textContent='惜败';
+      log('bidLog', '价格来到 4400 万，接近午夜。第二天，辛顿宣布：<b>谷歌胜出</b>。');
+      var r=document.getElementById('bidResult');
+      r.style.display='block'; r.className='banner good';
+      r.innerHTML='谷歌以 <b>4400 万美元</b>（约 2.88 亿人民币）买下这家 3 人公司。作为参照：一名资深工程师年薪 20–30 万美元，4400 万约等于 <b>150 人的年薪</b>——谷歌买的不是产品，是 3 颗大脑。';
+      if(bidTimer){ clearInterval(bidTimer); bidTimer=null; }
+    }
+  }
+  document.getElementById('bidBtn').addEventListener('click', doBid);
+  document.getElementById('autoBid').addEventListener('click', function(){
+    if(bidTimer) return;
+    if(price>=4400) return;
+    bidTimer=setInterval(function(){ doBid(); if(price>=4400){ clearInterval(bidTimer); bidTimer=null; } }, 500);
+  });
+  document.getElementById('resetBid').addEventListener('click', function(){
+    if(bidTimer){ clearInterval(bidTimer); bidTimer=null; }
+    price=1200; renderBid();
+    ['bd-deepmind','bd-microsoft','bd-baidu'].forEach(function(id){ var el=document.getElementById(id); el.classList.remove('out','win'); el.querySelector('.state').textContent='竞拍中'; });
+    var g=document.getElementById('bd-google'); g.classList.remove('out','win'); g.querySelector('.state').textContent='竞拍中';
+    document.getElementById('bidResult').style.display='none';
+    document.getElementById('bidLog').innerHTML='<p>竞拍开始。四位买家彼此不知道对手身份。</p>';
+  });
+  renderBid();
+})();
+</script>
+</body>
+</html>

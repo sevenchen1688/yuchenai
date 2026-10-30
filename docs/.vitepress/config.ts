@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 import { resolve, relative, basename, join } from 'node:path'
 import { statSync, readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { generateSidebar, findFirstArticleLink, findFirstCategoryArticle, getArticleTitle } from './sidebar'
+import { generateSidebar, findFirstArticleLink, getArticleTitle } from './sidebar'
 import { buildSlugConfig } from './slug'
 import { generateBlogListing } from './blog-data'
 
@@ -60,7 +60,7 @@ function getLatestArticles(limit: number = 10) {
 
 const latestArticles = getLatestArticles(10)
 const blogListingData = generateBlogListing(docsDir)
-const firstArticleLink = findFirstCategoryArticle()
+const firstArticleLink = findFirstArticleLink('ai-fundamentals')
 
 const blogNavLabels: Record<string, string> = {
   'ai-fundamentals': 'AI通识',

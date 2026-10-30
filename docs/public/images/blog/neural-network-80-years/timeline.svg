@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 330" width="680" height="330" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif">
+  <title>神经网络八十年时间线：从神经元模型到 ChatGPT</title>
+  <desc>1943神经元模型、1949赫布法则、1957感知机、1969 XOR证明后进入寒冬、1986反向传播、2012 AlexNet、2015 OpenAI、2022 ChatGPT，其中1969到2012为神经网络寒冬期。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="680" height="330" fill="#ffffff"/>
+  <text x="45" y="44" font-size="14" font-weight="500" fill="#26215C">神经网络八十年：能学、失败、复活、爆发</text>
+  <rect x="245.4" y="60" width="288" height="250" fill="#FCEBEB"/>
+  <text x="389" y="72" text-anchor="middle" font-size="12" fill="#791F1F">神经网络寒冬 1969→2012</text>
+  <text x="450" y="176" text-anchor="middle" font-size="12" fill="#791F1F">缺数据 · 算力 · 算法</text>
+  <line x1="45" y1="190" x2="630" y2="190" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="86" y1="124" x2="74.8" y2="190" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="40" y="76" width="92" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="86" y="92" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">1943</text>
+    <text x="86" y="109" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">神经元模型</text>
+  </g>
+  <line x1="109.8" y1="190" x2="109.8" y2="208" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="70.8" y="208" width="78" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="109.8" y="224" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">1949</text>
+    <text x="109.8" y="241" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">赫布法则</text>
+  </g>
+  <line x1="164.4" y1="172" x2="164.4" y2="190" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="118.4" y="124" width="92" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="164.4" y="140" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">1957</text>
+    <text x="164.4" y="157" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">感知机诞生</text>
+  </g>
+  <line x1="245.4" y1="190" x2="245.4" y2="256" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="205.4" y="256" width="80" height="48" rx="8" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+    <text x="245.4" y="272" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#A32D2D">1969</text>
+    <text x="245.4" y="289" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#791F1F">XOR 证明</text>
+  </g>
+  <line x1="361.2" y1="124" x2="361.2" y2="190" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="322.2" y="76" width="78" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="361.2" y="92" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">1986</text>
+    <text x="361.2" y="109" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">反向传播</text>
+  </g>
+  <line x1="533.4" y1="190" x2="533.4" y2="208" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="478.4" y="208" width="110" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="533.4" y="224" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">2012</text>
+    <text x="533.4" y="241" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">AlexNet 爆发</text>
+  </g>
+  <line x1="553.2" y1="172" x2="553.2" y2="190" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="502.2" y="124" width="102" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="553.2" y="140" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">2015</text>
+    <text x="553.2" y="157" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">OpenAI 创立</text>
+  </g>
+  <line x1="599.4" y1="190" x2="599.4" y2="256" stroke="#B4B2A9" stroke-width="1"/>
+  <g>
+    <rect x="560.4" y="256" width="78" height="48" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+    <text x="599.4" y="272" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#185FA5">2022</text>
+    <text x="599.4" y="289" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#0C447C">ChatGPT</text>
+  </g>
+</svg>

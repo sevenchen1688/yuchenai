@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 寒冬互动演示</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f0eee9;
+    color: #2c2a26;
+    line-height: 1.75;
+    font-size: 16px;
+  }
+  article {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 44px;
+    box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .demo {
+    background: #f8f7f4;
+    border: 1px solid #e8e5de;
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .demo-title { font-size: 15px; font-weight: 700; color: #0c447c; margin-bottom: 5px; }
+  .demo-sub { font-size: 13px; color: #8a8578; margin-bottom: 18px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0; }
+  button {
+    font-family: inherit; font-size: 14px; padding: 6px 15px; border: 1px solid #b4b2a9;
+    background: #fff; color: #2c2a26; border-radius: 8px; cursor: pointer;
+    transition: border-color .2s, color .2s, background .2s, transform .15s;
+  }
+  button:hover { border-color: #185fa5; color: #185fa5; }
+  button:active { transform: translateY(1px); }
+  button.active, button.toggle.active {
+    background: #e6f1fb; border-color: #185fa5; color: #0c447c; font-weight: 600;
+  }
+  button.good.active { background: #eaf3de; border-color: #3b6d11; color: #2d4f0c; }
+  .meter { margin: 10px 0 14px; }
+  .meter-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+  .bar { position: relative; height: 20px; background: #eceae4; border-radius: 6px; overflow: hidden; }
+  .bar .fill {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 40%;
+    background: #7fb0dd; border-radius: 6px; transition: width .3s, background .3s;
+  }
+  .bar .fill.amber { background: #f3bd68; }
+  .bar .fill.red { background: #e37b74; }
+  .bar .fill.green { background: #82b567; }
+  .banner {
+    margin-top: 14px; background: #eef4fb; border-radius: 8px; padding: 11px 14px;
+    font-size: 14px; transition: background .25s;
+  }
+  .banner.warn { background: #faeeda; }
+  .banner.bad { background: #fcebeb; }
+  .banner.good { background: #eaf3de; }
+  .log {
+    font-size: 13.5px; color: #55524b; background: #fff; border: 1px solid #e8e5de;
+    border-radius: 8px; padding: 10px 14px; min-height: 42px; margin-top: 12px;
+  }
+  .log p { margin: 3px 0; }
+  .log p:last-child { font-weight: 600; }
+  .tokens { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .token {
+    border: 1px dashed #b4b2a9; background: #fff; border-radius: 999px;
+    padding: 3px 11px; font-size: 13px;
+  }
+  .token.step { border-color: #185fa5; background: #e6f1fb; color: #0c447c; }
+  .result {
+    border-left: 3px solid #185fa5; background: #eef4fb; border-radius: 0 8px 8px 0;
+    padding: 10px 14px; font-size: 14px;
+  }
+  .result.bad { border-color: #a32d2d; background: #fcebeb; }
+  .signboard {
+    min-height: 76px; display: grid; place-items: center; border-radius: 12px;
+    border: 1px solid #d3d1c7; background: #fff; margin: 12px 0;
+  }
+  .sign {
+    font-size: 21px; font-weight: 800; padding: 10px 22px; border-radius: 9px;
+    transition: background .3s, color .3s, transform .3s;
+  }
+  .sign.ai { background: #185fa5; color: #fff; }
+  .sign.safe { background: #eaf3de; color: #2d4f0c; }
+  .reaction { font-size: 14px; padding: 10px 14px; border-radius: 8px; background: #eef4fb; }
+  .reaction.quiet { background: #eceae4; color: #55524b; }
+  .switches { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 16px; }
+  .metric-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;
+    margin: 14px 0;
+  }
+  .metric {
+    background: #fff; border: 1px solid #e8e5de; border-radius: 9px; padding: 10px 12px;
+    font-size: 13px;
+  }
+  .metric strong { display: block; font-size: 16px; color: #0c447c; margin-bottom: 2px; }
+  @media (max-width: 700px) {
+    article { padding: 28px 20px 48px; }
+    .metric-grid { grid-template-columns: 1fr; }
+  }
+  /* 嵌入 VitePress 文章时只展示指定互动组件。 */
+  body.embed-demo { background: transparent; }
+  body.embed-demo article {
+    max-width: none; margin: 0; padding: 0; background: transparent; box-shadow: none;
+  }
+  body.embed-demo article > *:not(.demo) { display: none !important; }
+  body.embed-demo article > .demo { display: none !important; }
+  body.embed-demo article > .demo.is-active {
+    display: block !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 20px 24px 22px !important;
+  }
+  @media (max-width: 700px) {
+    body.embed-demo article > .demo.is-active { padding: 16px 16px 18px !important; }
+  }
+</style>
+</head>
+<body>
+<article>
+  <h1>AI 寒冬互动演示</h1>
+
+  <div class="demo" id="demo1">
+    <div class="demo-title">互动演示 1 · 宣传和现实的温差</div>
+    <div class="demo-sub">分别拖动两个滑块。差距越大，资金撤得越快——这就是两次寒冬的共同起点。</div>
+    <div class="meter">
+      <div class="meter-head"><span>宣传里说能干</span><span id="promVal">10 件</span></div>
+      <div class="bar"><span id="promBar" class="fill blue"></span></div>
+    </div>
+    <input id="promSlider" type="range" min="1" max="10" value="10" style="width:100%;accent-color:#185fa5;">
+    <div class="meter">
+      <div class="meter-head"><span>实际可靠能干</span><span id="realVal">6 件</span></div>
+      <div class="bar"><span id="realBar" class="fill green"></span></div>
+    </div>
+    <input id="realSlider" type="range" min="1" max="10" value="6" style="width:100%;accent-color:#3b6d11;">
+    <div class="banner" id="hypeMsg"></div>
+  </div>
+
+  <div class="demo" id="demo2">
+    <div class="demo-title">互动演示 2 · 查词典的机器翻译为什么会翻车</div>
+    <div class="demo-sub">先选一句中文，再点“按规则直译往返”。词典认识每个词，却不认识整句话的意思。</div>
+    <div class="controls" id="phraseBtns">
+      <button class="active" data-phrase="eye-not-see-heart-not-annoyed">眼不见心不烦</button>
+      <button data-phrase="throw-pot">甩锅</button>
+      <button data-phrase="three-think-then-walk">三思而后行</button>
+    </div>
+    <div class="tokens" id="mtTokens"></div>
+    <div class="controls">
+      <button id="mtTranslate">按规则直译往返</button>
+      <button id="mtReset">重置</button>
+    </div>
+    <div class="log" id="mtLog"><p>选择一句中文，然后开始往返翻译。</p></div>
+  </div>
+
+  <div class="demo" id="demo3">
+    <div class="demo-title">互动演示 3 · XCON 的规则膨胀</div>
+    <div class="demo-sub">点“推进一个阶段”。规则越写越多，维护它本身逐渐变成了新的难题。</div>
+    <div class="controls">
+      <button id="xconNext">推进一个阶段</button>
+      <button id="xconAuto">自动推进</button>
+      <button id="xconReset">重置</button>
+    </div>
+    <div class="meter-head"><span id="xconYear">1978 年</span><span id="xconRules">300 条规则</span></div>
+    <div class="bar"><span id="xconBar" class="fill blue"></span></div>
+    <div class="metric-grid">
+      <div class="metric"><strong id="maintainVal">一个人能记住</strong>维护状态</div>
+      <div class="metric"><strong id="riskVal">低</strong>改一条规则的牵连风险</div>
+    </div>
+    <div class="banner" id="xconMsg">几百条规则，还处在专家系统的黄金期。</div>
+    <div class="log" id="xconLog"><p>从 XCON 的几百条规则开始。</p></div>
+  </div>
+
+  <div class="demo" id="demo4">
+    <div class="demo-title">互动演示 4 · 换掉招牌，保住火种</div>
+    <div class="demo-sub">寒冬里许多团队不再提“AI”。点按钮看看门口招牌和外界反应怎么变。</div>
+    <div class="signboard"><div class="sign ai" id="signText">AI 实验室</div></div>
+    <div class="reaction" id="investorBox">投资人热情，但每季度都要求兑现承诺。</div>
+    <div class="controls">
+      <button id="renameBtn">把 AI 从招牌上撤下</button>
+      <button id="restoreBtn">恢复 AI 招牌</button>
+    </div>
+    <div class="log" id="renameLog"><p>门口写着 AI 实验室：热度高，审视也高。</p></div>
+  </div>
+
+  <div class="demo" id="demo5">
+    <div class="demo-title">互动演示 5 · 三件事，得凑齐</div>
+    <div class="demo-sub">打开或关掉三根支柱。少一样，场面再热闹也长不了。</div>
+    <div class="switches">
+      <button class="toggle good active" data-key="tech">技术真能做出来</button>
+      <button class="toggle good active" data-key="money">有人愿意掏钱</button>
+      <button class="toggle good active" data-key="patience">掏钱的人等得起</button>
+    </div>
+    <div class="banner good" id="pillarMsg"></div>
+    <div class="log" id="pillarLog"><p>当前凑齐 3/3：技术、资金、耐心同时在线。</p></div>
+  </div>
+</article>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('embed') === '1') {
+    document.body.classList.add('embed-demo')
+    const demoId = (params.get('demo') || '').replace(/\D/g, '')
+    if (demoId) document.getElementById('demo' + demoId)?.classList.add('is-active')
+  }
+
+  function appendLog(id, html) {
+    const el = document.getElementById(id)
+    const p = document.createElement('p')
+    p.innerHTML = html
+    el.appendChild(p)
+    el.scrollTop = el.scrollHeight
+  }
+
+  // 1. 宣传与现实的温差
+  const promSlider = document.getElementById('promSlider')
+  const realSlider = document.getElementById('realSlider')
+  function renderHype() {
+    const p = +promSlider.value
+    const r = +realSlider.value
+    const gap = p - r
+    document.getElementById('promVal').textContent = p + ' 件'
+    document.getElementById('realVal').textContent = r + ' 件'
+    document.getElementById('promBar').style.width = (p * 10) + '%'
+    document.getElementById('realBar').style.width = (r * 10) + '%'
+    const msg = document.getElementById('hypeMsg')
+    const bars = [document.getElementById('promBar'), document.getElementById('realBar')]
+    if (gap >= 5) {
+      msg.className = 'banner bad'
+      msg.innerHTML = '<b>承诺崩塌：</b>宣传里承诺 ' + p + ' 件，可靠交付只有 ' + r + ' 件。窟窿摆在这里，资金开始撤退。'
+    } else if (gap >= 3) {
+      msg.className = 'banner warn'
+      msg.innerHTML = '<b>开始怀疑：</b>差距有 ' + gap + ' 件。看演示的人会点头，但下一轮预算已经不好批。'
+    } else {
+      msg.className = 'banner'
+      msg.innerHTML = '<b>预期平衡：</b>宣传和真实能力只差 ' + gap + ' 件，项目还能继续获得耐心。'
+    }
+    bars[0].className = 'fill ' + (gap >= 5 ? 'red' : gap >= 3 ? 'amber' : 'blue')
+    bars[1].className = 'fill ' + (gap >= 5 ? 'red' : 'green')
+  }
+  promSlider.addEventListener('input', renderHype)
+  realSlider.addEventListener('input', renderHype)
+  renderHype()
+
+  // 2. 查词典的机器翻译
+  const mtPhrases = {
+    'eye-not-see-heart-not-annoyed': {
+      words: ['眼', '不', '见', '心', '不', '烦'],
+      dictionary: 'eye / not / see / heart / not / annoyed',
+      literal: '眼睛没看见，心脏不烦。',
+      meaning: '只要看不见，心里就不会被它搅得烦躁。'
+    },
+    'throw-pot': {
+      words: ['甩', '锅'],
+      dictionary: 'throw / pot',
+      literal: '把锅抛出去。',
+      meaning: '把本该自己承担的责任转移给别人。'
+    },
+    'three-think-then-walk': {
+      words: ['三', '思', '而', '后', '行'],
+      dictionary: 'three / think / then / walk',
+      literal: '思考三次，然后走路。',
+      meaning: '行动之前要反复权衡。'
+    }
+  }
+  let currentPhrase = 'eye-not-see-heart-not-annoyed'
+  let mtTimer = null
+  function resetMt(text) {
+    clearInterval(mtTimer)
+    mtTimer = null
+    document.getElementById('mtLog').innerHTML = '<p>' + text + '</p>'
+    document.getElementById('mtTokens').innerHTML = ''
+  }
+  document.querySelectorAll('#phraseBtns button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#phraseBtns button').forEach(x => x.classList.remove('active'))
+      btn.classList.add('active')
+      currentPhrase = btn.dataset.phrase
+      resetMt('已选择：' + btn.textContent + '。现在点“按规则直译往返”。')
+    })
+  })
+  document.getElementById('mtTranslate').addEventListener('click', () => {
+    clearInterval(mtTimer)
+    const data = mtPhrases[currentPhrase]
+    const log = document.getElementById('mtLog')
+    const tokens = document.getElementById('mtTokens')
+    log.innerHTML = ''
+    tokens.innerHTML = data.words.map(w => '<span class="token">' + w + '</span>').join('')
+    const steps = [
+      '<b>1. 分词：</b>' + data.words.join(' / '),
+      '<b>2. 查词典：</b>' + data.dictionary,
+      '<b>3. 按词拼句：</b>每个词都能翻译，但整句结构对不上。',
+      '<b>4. 译回中文：</b>' + data.literal,
+      '<b>人要表达的意思：</b>' + data.meaning
+    ]
+    let i = 0
+    appendLog('mtLog', steps[0])
+    mtTimer = setInterval(() => {
+      i++
+      if (i >= steps.length) {
+        clearInterval(mtTimer)
+        mtTimer = null
+        return
+      }
+      appendLog('mtLog', steps[i])
+    }, 420)
+  })
+  document.getElementById('mtReset').addEventListener('click', () => resetMt('已重置。请重新选择一句中文。'))
+
+  // 3. XCON 规则膨胀
+  const xconStages = [
+    { year: '1978 年', rules: 300, maintain: '一个人能记住', risk: '低', msg: '几百条规则，还处在专家系统的黄金期。' },
+    { year: '1981 年', rules: 1200, maintain: '需要专门维护', risk: '可控', msg: '规则过了千条，维护开始变成专门工作。' },
+    { year: '1983 年', rules: 5000, maintain: '改前要查牵连', risk: '中', msg: '每新增一条，都得先查它会撞到哪些旧规则。' },
+    { year: '1985 年', rules: 10000, maintain: '维护占满主力时间', risk: '高', msg: '系统还在运行，但主力已经没余力往前做了。' },
+    { year: '1986 年', rules: 13000, maintain: '没人敢轻动旧规则', risk: '很高', msg: '旧规则成了暗礁。改这一条，可能撞翻另一条。' },
+    { year: '1988 年', rules: 17500, maintain: '苦苦维持', risk: '失控', msg: 'XCON 不是在长大，而是在苦苦维持自己活着。' }
+  ]
+  let xconIdx = 0
+  let xconTimer = null
+  function renderXcon(addLog) {
+    const stage = xconStages[xconIdx]
+    document.getElementById('xconYear').textContent = stage.year
+    document.getElementById('xconRules').textContent = stage.rules.toLocaleString() + ' 条规则'
+    document.getElementById('maintainVal').textContent = stage.maintain
+    document.getElementById('riskVal').textContent = stage.risk
+    const bar = document.getElementById('xconBar')
+    bar.style.width = Math.max(8, stage.rules / 17500 * 100) + '%'
+    bar.className = 'fill ' + (stage.risk === '失控' || stage.risk === '很高' ? 'red' : stage.risk === '高' ? 'amber' : 'blue')
+    const msg = document.getElementById('xconMsg')
+    msg.className = 'banner ' + (stage.risk === '失控' || stage.risk === '很高' ? 'bad' : stage.risk === '高' ? 'warn' : '')
+    msg.innerHTML = '<b>' + stage.year + '：</b>' + stage.msg
+    if (addLog) appendLog('xconLog', stage.msg)
+  }
+  function xconNext() {
+    if (xconIdx >= xconStages.length - 1) return false
+    xconIdx++
+    renderXcon(true)
+    return true
+  }
+  document.getElementById('xconNext').addEventListener('click', () => xconNext())
+  document.getElementById('xconAuto').addEventListener('click', () => {
+    if (xconTimer) return
+    xconTimer = setInterval(() => {
+      if (!xconNext()) {
+        clearInterval(xconTimer)
+        xconTimer = null
+      }
+    }, 650)
+  })
+  document.getElementById('xconReset').addEventListener('click', () => {
+    clearInterval(xconTimer)
+    xconTimer = null
+    xconIdx = 0
+    document.getElementById('xconLog').innerHTML = '<p>从 XCON 的几百条规则开始。</p>'
+    renderXcon(false)
+  })
+  renderXcon(false)
+
+  // 4. 换招牌
+  const signText = document.getElementById('signText')
+  const investorBox = document.getElementById('investorBox')
+  document.getElementById('renameBtn').addEventListener('click', () => {
+    signText.textContent = '机器学习组'
+    signText.className = 'sign safe'
+    investorBox.textContent = '投资人暂时离场，审查变少；团队和机器还在，火种保住了。'
+    investorBox.classList.add('quiet')
+    appendLog('renameLog', '门口的“AI”被摘下。人还是那批人，活也还是那些活。')
+  })
+  document.getElementById('restoreBtn').addEventListener('click', () => {
+    signText.textContent = 'AI 实验室'
+    signText.className = 'sign ai'
+    investorBox.textContent = '投资人热情，但每季度都要求兑现承诺。'
+    investorBox.classList.remove('quiet')
+    appendLog('renameLog', '招牌换回 AI：热度和审视同时回来了。')
+  })
+
+  // 5. 三根支柱
+  const pillars = { tech: true, money: true, patience: true }
+  function renderPillars() {
+    const active = Object.values(pillars).filter(Boolean).length
+    const missing = []
+    if (!pillars.tech) missing.push('技术做不出来')
+    if (!pillars.money) missing.push('没人掏钱')
+    if (!pillars.patience) missing.push('掏钱的人等不起')
+    const msg = document.getElementById('pillarMsg')
+    document.querySelectorAll('.toggle').forEach(btn => {
+      btn.classList.toggle('active', pillars[btn.dataset.key])
+    })
+    if (active === 3) {
+      msg.className = 'banner good'
+      msg.innerHTML = '<b>三样齐了：</b>技术、资金、耐心同时在线，项目才可能进入持续生长的循环。'
+    } else if (active === 2) {
+      msg.className = 'banner warn'
+      msg.innerHTML = '<b>还差最后一样：</b>' + missing.join('；') + '。最后一根支柱没接住，迟早会摔。'
+    } else {
+      msg.className = 'banner bad'
+      msg.innerHTML = '<b>撑不住：</b>' + (missing.join('；') || '关键支柱没有打开') + '。场面再热闹也长不了。'
+    }
+    document.getElementById('pillarLog').innerHTML = '<p>当前凑齐 ' + active + '/3。' + (missing.length ? '缺：' + missing.join('、') + '。' : '') + '</p>'
+  }
+  document.querySelectorAll('.toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pillars[btn.dataset.key] = !pillars[btn.dataset.key]
+      renderPillars()
+    })
+  })
+  renderPillars()
+})
+</script>
+</body>
+</html>

@@ -465,11 +465,20 @@ strong, b {
 
 /* ===== 内容排版增强 ===== */
 
+/* 文章一级标题与顶部导航栏保持适当间距 */
+.vp-doc h1 {
+  margin-top: 24px;
+}
+
 /* H2 - 模仿 HTML 的编号+标题+渐变分割线风格 */
+.vp-doc p:has(+ h2) {
+  margin-bottom: 0.35em;
+}
+
 .vp-doc h2 {
   border: none;
   padding-bottom: 0.25em;
-  margin-top: 2.5em;
+  margin-top: 0.35em;
   margin-bottom: 1em;
   font-size: 1.35rem;
   font-weight: 700;
